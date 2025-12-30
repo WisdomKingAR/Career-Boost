@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: careerboost-db
+    environment:
+      POSTGRES_USER: careerboost
+      POSTGRES_PASSWORD: careerboost123
+      POSTGRES_DB: careerboost
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - careerboost-network
+
+  # Backend API
+  backend:
+    build: ./careerboost-backend
+    container_name: careerboost-api
+    environment:
+      DATABASE_URL: postgresql://careerboost:careerboost123@postgres:5432/careerboost
+      NODE_ENV: development
+      PORT: 5000
+      JWT_SECRET: your_secret_key_change_in_production
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./careerboost-backend:/app
+      - /app/node_modules
+    networks:
+      - careerboost-network
+    command: npm run dev
+
+  # Frontend (optional - use for production)
+  frontend:
+    image: nginx:alpine
+    container_name: careerboost-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./careerboost-frontend:/usr/share/nginx/html
+    networks:
+      - careerboost-network
+
+networks:
+  careerboost-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="CareerBoost - AI-powered career development assistant for B.Tech AI & Data Science students">
+    <title>CareerBoost - Accelerate Your Career</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/responsive.css">
+    <link rel="stylesheet" href="assets/animations.css">
+    <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <div class="logo-icon">🚀</div>
+                <span class="brand-name">Career<span class="accent">Boost</span></span>
+            </div>
+
+            <div class="nav-menu" id="navMenu">
+                <a href="#" class="nav-link active" data-page="dashboard">Dashboard</a>
+                <a href="#" class="nav-link" data-page="certificates">Certificates</a>
+                <a href="#" class="nav-link" data-page="internships">Internships</a>
+                <a href="#" class="nav-link" data-page="hackathons">Hackathons</a>
+                <a href="#" class="nav-link" data-page="news">News</a>
+                <a href="#" class="nav-link" data-page="tools">AI Tools</a>
+                <a href="#" class="nav-link" data-page="projects">Projects</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <button class="btn btn-primary" id="loginBtn">Login</button>
+                <button class="btn btn-secondary" id="signupBtn">Sign Up</button>
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page active">
+                <div class="hero-section">
+                    <div class="hero-content">
+                        <h1 class="hero-title">
+                            Accelerate Your <span class="gradient-text">AI Career</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            Discover certificates, internships, hackathons, and AI tools curated for B.Tech students
+                        </p>
+                        <div class="hero-stats">
+                            <div class="stat-card">
+                                <div class="stat-number" id="certCount">50+</div>
+                                <div class="stat-label">Certificates</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="internshipCount">100+</div>
+                                <div class="stat-label">Internships</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="hackathonCount">30+</div>
+                                <div class="stat-label">Hackathons</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <section class="quick-actions">
+                    <h2 class="section-title">What would you like to do?</h2>
+                    <div class="action-grid">
+                        <button class="action-card" data-page="certificates">
+                            <div class="action-icon">📜</div>
+                            <h3>Find Certificates</h3>
+                            <p>Discover free and paid certifications</p>
+                        </button>
+                        <button class="action-card" data-page="internships">
+                            <div class="action-icon">💼</div>
+                            <h3>Discover Internships</h3>
+                            <p>Find your next internship opportunity</p>
+                        </button>
+                        <button class="action-card" data-page="hackathons">
+                            <div class="action-icon">🏆</div>
+                            <h3>Upcoming Hackathons</h3>
+                            <p>Compete and win prizes</p>
+                        </button>
+                        <button class="action-card" data-page="news">
+                            <div class="action-icon">📰</div>
+                            <h3>Latest Tech News</h3>
+                            <p>Stay updated on AI & cybersecurity</p>
+                        </button>
+                        <button class="action-card" data-page="tools">
+                            <div class="action-icon">🛠️</div>
+                            <h3>AI Tools</h3>
+                            <p>Discover tools for your projects</p>
+                        </button>
+                        <button class="action-card" data-page="projects">
+                            <div class="action-icon">💡</div>
+                            <h3>Project Ideas</h3>
+                            <p>Get inspired with project suggestions</p>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Certificates Page -->
+            <div id="certificatesPage" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">📜 Discover Certificates</h1>
+                    <p class="page-description">Free and paid certifications to boost your career</p>
+                </div>
+
+                <div class="filters-section">
+                    <div class="search-box">
+                        <input type="text" id="certSearchInput" placeholder="Search certificates..."
+                            class="search-input">
+                        <button class="search-btn" id="certSearchBtn">🔍</button>
+                    </div>
+                    <div class="filter-group">
+                        <select id="certLevelFilter" class="filter-select">
+                            <option value="">All Levels</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                        <select id="certCostFilter" class="filter-select">
+                            <option value="">All Costs</option>
+                            <option value="0">Free</option>
+                            <option value="50">Under $50</option>
+                            <option value="100">Under $100</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="certificatesGrid" class="cards-grid">
+                    <div class="loading">Loading certificates...</div>
+                </div>
+            </div>
+
+            <!-- Internships Page -->
+            <div id="internshipsPage" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">💼 Find Internships</h1>
+                    <p class="page-description">Discover internship opportunities matching your skills</p>
+                </div>
+
+                <div class="filters-section">
+                    <div class="search-box">
+                        <input type="text" id="internshipSearchInput" placeholder="Search internships..."
+                            class="search-input">
+                        <button class="search-btn" id="internshipSearchBtn">🔍</button>
+                    </div>
+                    <div class="filter-group">
+                        <select id="internshipRemoteFilter" class="filter-select">
+                            <option value="">All Locations</option>
+                            <option value="true">Remote</option>
+                            <option value="false">On-site</option>
+                        </select>
+                        <select id="internshipStipendFilter" class="filter-select">
+                            <option value="">All Stipends</option>
+                            <option value="0">Free</option>
+                            <option value="20000">₹20,000+</option>
+                            <option value="50000">₹50,000+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="internshipsGrid" class="cards-grid">
+                    <div class="loading">Loading internships...</div>
+                </div>
+            </div>
+
+            <!-- Hackathons Page -->
+            <div id="hackathonsPage" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">🏆 Upcoming Hackathons</h1>
+                    <p class="page-description">Compete, learn, and win prizes</p>
+                </div>
+
+                <div id="hackathonsGrid" class="cards-grid">
+                    <div class="loading">Loading hackathons...</div>
+                </div>
+            </div>
+
+            <!-- News Page -->
+            <div id="newsPage" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">📰 Latest Tech News</h1>
+                    <p class="page-description">Stay updated on AI, Cybersecurity & Data Science</p>
+                </div>
+
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-category="">All</button>
+                        <button class="filter-btn" data-category="AI">AI</button>
+                        <button class="filter-btn" data-category="Cybersecurity">Cybersecurity</button>
+                        <button class="filter-btn" data-category="DataScience">Data Science</button>
+                    </div>
+                </div>
+
+                <div id="newsGrid" class="news-grid">
+                    <div class="loading">Loading news...</div>
+                </div>
+            </div>
+
+            <!-- Tools Page -->
+            <div id="toolsPage" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">🛠️ AI Tools & Platforms</h1>
+                    <p class="page-description">Discover tools to build your next AI project</p>
+                </div>
+
+                <div id="toolsGrid" class="cards-grid">
+                    <div class="loading">Loading tools...</div>
+                </div>
+            </div>
+
+            <!-- Projects Page -->
+            <div id="projectsPage" class="page">
+                <div class="page-header">
+                    <h1 class="page-title">💡 Project Ideas</h1>
+                    <p class="page-description">Get inspired with project ideas for your portfolio</p>
+                </div>
+
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-difficulty="">All Levels</button>
+                        <button class="filter-btn" data-difficulty="beginner">Beginner</button>
+                        <button class="filter-btn" data-difficulty="intermediate">Intermediate</button>
+                        <button class="filter-btn" data-difficulty="advanced">Advanced</button>
+                    </div>
+                </div>
+
+                <div id="projectsGrid" class="cards-grid">
+                    <div class="loading">Loading projects...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login</h2>
+                <button class="close-modal" id="closeLoginModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <p class="auth-switch">Don't have an account? <a href="#" id="switchToSignup">Sign Up</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign Up</h2>
+                <button class="close-modal" id="closeSignupModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" required placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupUsername">Username</label>
+                        <input type="text" id="signupUsername" required placeholder="Choose a username">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" required placeholder="Create a password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                    <p class="auth-switch">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 CareerBoost. Built for B.Tech AI & Data Science students.</p>
+            <p>Mumbai, India 🇮🇳</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="src/api/client.js"></script>
+    <script src="src/app.js"></script>
+</body>
+
+</html>
