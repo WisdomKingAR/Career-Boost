@@ -2,6 +2,7 @@
 
 /* ==================== CSS VARIABLES ==================== */
 :root {
+  color-scheme: dark;
   /* Colors - Dark Mode (Default) */
   --bg-primary: #050511;
   /* Deep space black */
@@ -82,6 +83,7 @@
 
 /* Light Mode Override */
 [data-theme="light"] {
+  color-scheme: light;
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
@@ -681,6 +683,16 @@ button {
   background-repeat: no-repeat;
   background-position: right 1rem center;
   padding-right: 2.5rem;
+}
+
+.filter-select option {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .filter-select option {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
 }
 
 .filter-select:focus,
