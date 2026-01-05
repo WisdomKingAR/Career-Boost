@@ -1,5 +1,5 @@
-# Use Node.js LTS image
-FROM node:18-alpine
+# Use Node.js LTS image (Debian-based to ensure OpenSSL compatibility for Prisma)
+FROM node:18-bullseye-slim
 
 # Set working directory
 WORKDIR /app
@@ -7,13 +7,13 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies (including dev for Prisma CLI)
-RUN npm install
+# Install dependencies (including dev for Prisma CLI), but skip postinstall scripts
+RUN npm install --ignore-scripts
 
 # Copy application code
 COPY . .
 
-# Generate Prisma client
+# Generate Prisma client after source is available
 RUN npx prisma generate
 
 # Expose port
