@@ -1,7 +1,11 @@
-// API Client for CareerBoost
-// Handles all API calls to the backend
-
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = (() => {
+    const meta = (typeof document !== 'undefined') ? document.querySelector('meta[name="api-base"]') : null;
+    if (meta && meta.content) return meta.content;
+    if (typeof window !== 'undefined' && window.location && window.location.hostname !== 'localhost') {
+        return `${window.location.origin.replace(/\/$/, '')}/api`;
+    }
+    return 'http://localhost:5000/api';
+})();
 
 class APIClient {
     constructor() {
@@ -41,9 +45,16 @@ class APIClient {
 
     // Authentication
     async register(userData) {
-        const data = await this.request('/auth/register', {
+        return this.request('/auth/register', {
             method: 'POST',
             body: JSON.stringify(userData),
+        });
+    }
+
+    async verifyOTP(email, otp) {
+        const data = await this.request('/auth/verify-otp', {
+            method: 'POST',
+            body: JSON.stringify({ email, otp }),
         });
         if (data.token) {
             this.setToken(data.token);
@@ -82,6 +93,10 @@ class APIClient {
         return this.request(`/certificates/search?q=${query}&level=${level || ''}`);
     }
 
+    async getCertificateById(id) {
+        return this.request(`/certificates/${id}`);
+    }
+
     async saveCertificate(id) {
         return this.request(`/certificates/${id}/save`, {
             method: 'POST',
@@ -98,8 +113,18 @@ class APIClient {
         return this.request(`/internships/search?q=${query}`);
     }
 
+    async getInternshipById(id) {
+        return this.request(`/internships/${id}`);
+    }
+
     async applyForInternship(id) {
         return this.request(`/internships/${id}/apply`, {
+            method: 'POST',
+        });
+    }
+
+    async saveInternship(id) {
+        return this.request(`/internships/${id}/save`, {
             method: 'POST',
         });
     }
@@ -112,6 +137,16 @@ class APIClient {
 
     async getUpcomingHackathons() {
         return this.request('/hackathons/upcoming');
+    }
+
+    async getHackathonById(id) {
+        return this.request(`/hackathons/${id}`);
+    }
+
+    async saveHackathon(id) {
+        return this.request(`/hackathons/${id}/save`, {
+            method: 'POST',
+        });
     }
 
     // News

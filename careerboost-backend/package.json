@@ -8,23 +8,32 @@
     "dev": "nodemon server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "start:deploy": "prisma migrate deploy && node server.js",
+    "postinstall": "prisma generate"
   },
-  "keywords": ["career", "ai", "internships", "certificates", "hackathons"],
+  "keywords": [
+    "career",
+    "ai",
+    "internships",
+    "certificates",
+    "hackathons"
+  ],
   "author": "CareerBoost Team",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "@prisma/client": "^5.7.0",
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
+    "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "@prisma/client": "^5.7.0",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "axios": "^1.6.2",
-    "cheerio": "^1.0.0-rc.12",
+    "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "nodemailer": "^7.0.12"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",

@@ -10,8 +10,13 @@ const authMiddleware = (req, res, next) => {
             return res.status(401).json({ error: 'Authentication required' });
         }
 
+        const JWT_SECRET = process.env.JWT_SECRET;
+        if (!JWT_SECRET) {
+            return res.status(500).json({ error: 'Server misconfigured: missing JWT secret' });
+        }
+
         // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
+        const decoded = jwt.verify(token, JWT_SECRET);
 
         // Add user ID to request
         req.userId = decoded.userId;

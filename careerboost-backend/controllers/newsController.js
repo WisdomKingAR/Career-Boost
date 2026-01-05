@@ -1,5 +1,5 @@
-// News controller
 const { PrismaClient } = require('@prisma/client');
+const axios = require('axios');
 const prisma = new PrismaClient();
 
 const mockNews = [
@@ -74,15 +74,25 @@ const mockNews = [
 exports.getLatestNews = async (req, res) => {
     try {
         const { limit = 10 } = req.query;
-
-        // TEMPORARY: Use mock data directly (no PostgreSQL)
-        let news = mockNews.slice(0, parseInt(limit));
-
-        res.json({
-            success: true,
-            count: news.length,
-            data: news
-        });
+        const key = process.env.NEWSAPI_KEY;
+        if (key) {
+            const url = `https://newsapi.org/v2/top-headlines?country=in&category=technology&pageSize=${parseInt(limit)}`;
+            const resp = await axios.get(url, { headers: { 'X-Api-Key': key } });
+            const mapped = (resp.data.articles || []).map((a, idx) => ({
+                id: `news_${idx}`,
+                headline: a.title,
+                description: a.description || '',
+                category: 'AI',
+                source: a.source?.name || 'Unknown',
+                sourceUrl: a.url,
+                imageUrl: a.urlToImage || null,
+                publishedAt: new Date(a.publishedAt || Date.now()),
+                createdAt: new Date()
+            }));
+            return res.json({ success: true, count: mapped.length, data: mapped });
+        }
+        const news = mockNews.slice(0, parseInt(limit));
+        res.json({ success: true, count: news.length, data: news });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch news' });
     }
@@ -92,19 +102,27 @@ exports.getNewsByCategory = async (req, res) => {
     try {
         const { category } = req.params;
         const validCategories = ['AI', 'Cybersecurity', 'DataScience'];
-
+        if (process.env.NEWSAPI_KEY) {
+            const url = `https://newsapi.org/v2/top-headlines?country=in&category=technology&pageSize=10`;
+            const resp = await axios.get(url, { headers: { 'X-Api-Key': process.env.NEWSAPI_KEY } });
+            const mapped = (resp.data.articles || []).map((a, idx) => ({
+                id: `news_${idx}`,
+                headline: a.title,
+                description: a.description || '',
+                category,
+                source: a.source?.name || 'Unknown',
+                sourceUrl: a.url,
+                imageUrl: a.urlToImage || null,
+                publishedAt: new Date(a.publishedAt || Date.now()),
+                createdAt: new Date()
+            }));
+            return res.json({ success: true, category, count: mapped.length, data: mapped });
+        }
         if (!validCategories.includes(category)) {
             return res.status(400).json({ error: 'Invalid category' });
         }
-
         const news = mockNews.filter(n => n.category === category);
-
-        res.json({
-            success: true,
-            category,
-            count: news.length,
-            data: news
-        });
+        res.json({ success: true, category, count: news.length, data: news });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch news by category' });
     }
@@ -113,22 +131,30 @@ exports.getNewsByCategory = async (req, res) => {
 exports.searchNews = async (req, res) => {
     try {
         const { q } = req.query;
-
         if (!q) {
             return res.status(400).json({ error: 'Search query required' });
         }
-
+        if (process.env.NEWSAPI_KEY) {
+            const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&pageSize=10&sortBy=publishedAt&language=en`;
+            const resp = await axios.get(url, { headers: { 'X-Api-Key': process.env.NEWSAPI_KEY } });
+            const mapped = (resp.data.articles || []).map((a, idx) => ({
+                id: `news_${idx}`,
+                headline: a.title,
+                description: a.description || '',
+                category: 'AI',
+                source: a.source?.name || 'Unknown',
+                sourceUrl: a.url,
+                imageUrl: a.urlToImage || null,
+                publishedAt: new Date(a.publishedAt || Date.now()),
+                createdAt: new Date()
+            }));
+            return res.json({ success: true, query: q, count: mapped.length, data: mapped });
+        }
         const news = mockNews.filter(n =>
             n.headline.toLowerCase().includes(q.toLowerCase()) ||
             n.description.toLowerCase().includes(q.toLowerCase())
         );
-
-        res.json({
-            success: true,
-            query: q,
-            count: news.length,
-            data: news
-        });
+        res.json({ success: true, query: q, count: news.length, data: news });
     } catch (error) {
         res.status(500).json({ error: 'Search failed' });
     }

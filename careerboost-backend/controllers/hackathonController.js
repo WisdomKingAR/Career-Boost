@@ -1,5 +1,7 @@
 // Hackathon controller
-const { hackathons, savedItems } = require('../utils/mockData');
+const { hackathons } = require('../utils/mockData');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 const mockHackathons = hackathons;
 
 exports.getAllHackathons = async (req, res) => {
@@ -55,20 +57,17 @@ exports.saveHackathon = async (req, res) => {
         const { id } = req.params;
         const userId = req.userId;
 
-        const existing = savedItems.find(item => item.userId === userId && item.itemId === id && item.itemType === 'hackathon');
+        const existing = await prisma.savedItem.findFirst({
+            where: { userId, itemId: id, itemType: 'hackathon' }
+        });
 
         if (existing) {
             return res.status(400).json({ error: 'Hackathon already saved' });
         }
 
-        const savedItem = {
-            id: `saved${savedItems.length + 1}`,
-            userId,
-            itemId: id,
-            itemType: 'hackathon',
-            createdAt: new Date()
-        };
-        savedItems.push(savedItem);
+        const savedItem = await prisma.savedItem.create({
+            data: { userId, itemId: id, itemType: 'hackathon' }
+        });
 
         res.json({
             success: true,

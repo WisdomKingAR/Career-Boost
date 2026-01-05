@@ -1,4 +1,4 @@
-// Prisma Schema for CareerBoost
+// Prisma Schema for CareerBoost - Refactored for SQLite with OTP support
 // Database: PostgreSQL
 
 generator client {
@@ -30,6 +30,19 @@ model User {
   projects      UserProject[]
 }
 
+// Temporary storage for users waiting for OTP verification
+model PendingUser {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  password      String
+  name          String
+  location      String?
+  otp           String
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+}
+
 // User skills
 model UserSkill {
   id            String    @id @default(cuid())
@@ -39,7 +52,6 @@ model UserSkill {
   proficiency   String    @default("beginner") // beginner, intermediate, advanced
   
   @@unique([userId, skillName])
-  @@index([userId])
 }
 
 // User preferences
@@ -50,8 +62,8 @@ model Preference {
   preferredLocation String  @default("remote")
   minStipend      Int       @default(0)
   maxDuration     Int       @default(12)
-  interests       String[]
-  difficultyLevel String[]  @default(["beginner", "intermediate"])
+  interests       String    @default("[]") // Store as JSON string for SQLite
+  difficultyLevel String    @default("[\"beginner\", \"intermediate\"]") // Store as JSON string for SQLite
 }
 
 // Certificates
@@ -63,15 +75,11 @@ model Certificate {
   duration    Int       // in hours
   cost        Float
   level       String    // beginner, intermediate, advanced
-  skills      String[]
+  skills      String    @default("[]") // Store as JSON string
   salaryImpact String?
   deadline    DateTime?
   description String?
   createdAt   DateTime  @default(now())
-  
-  @@index([issuer])
-  @@index([level])
-  @@index([createdAt])
 }
 
 // Internships
@@ -83,17 +91,13 @@ model Internship {
   remote      Boolean   @default(false)
   duration    Int       // in months
   stipend     Float?
-  skills      String[]
+  skills      String    @default("[]") // Store as JSON string
   deadline    DateTime
   applicationUrl String
   description String
   createdAt   DateTime  @default(now())
   
   applications Application[]
-  
-  @@index([company])
-  @@index([deadline])
-  @@index([remote])
 }
 
 // Hackathons
@@ -107,13 +111,10 @@ model Hackathon {
   location    String
   remote      Boolean   @default(true)
   teamSize    String
-  skills      String[]
+  skills      String    @default("[]") // Store as JSON string
   registerUrl String
   description String
   createdAt   DateTime  @default(now())
-  
-  @@index([platform])
-  @@index([startDate])
 }
 
 // News articles
@@ -127,9 +128,6 @@ model News {
   imageUrl    String?
   publishedAt DateTime
   createdAt   DateTime  @default(now())
-  
-  @@index([category])
-  @@index([publishedAt])
 }
 
 // AI Tools
@@ -143,11 +141,8 @@ model Tool {
   difficulty  String    // beginner, intermediate, advanced
   pricing     String?
   freeTier    Boolean   @default(false)
-  features    String[]
+  features    String    @default("[]") // Store as JSON string
   createdAt   DateTime  @default(now())
-  
-  @@index([category])
-  @@index([difficulty])
 }
 
 // Project ideas
@@ -157,15 +152,13 @@ model Project {
   description String
   difficulty  String
   duration    Int       // in weeks
-  techStack   String[]
-  skills      String[]
-  steps       String[]
-  resources   String[]
+  techStack   String    @default("[]") // Store as JSON string
+  skills      String    @default("[]") // Store as JSON string
+  steps       String    @default("[]") // Store as JSON string
+  resources   String    @default("[]") // Store as JSON string
   createdAt   DateTime  @default(now())
   
   userProjects UserProject[]
-  
-  @@index([difficulty])
 }
 
 // User projects
@@ -179,8 +172,6 @@ model UserProject {
   startedAt DateTime  @default(now())
   
   @@unique([userId, projectId])
-  @@index([userId])
-  @@index([status])
 }
 
 // Saved items
@@ -194,8 +185,6 @@ model SavedItem {
   createdAt   DateTime  @default(now())
   
   @@unique([userId, itemId])
-  @@index([userId])
-  @@index([itemType])
 }
 
 // Applications
@@ -209,6 +198,4 @@ model Application {
   appliedAt   DateTime  @default(now())
   
   @@unique([userId, internshipId])
-  @@index([userId])
-  @@index([status])
 }

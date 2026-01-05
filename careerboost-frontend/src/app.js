@@ -17,6 +17,7 @@ const state = {
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
   initializeTheme();
+  ensureSavedNavAndPage();
   setupEventListeners();
   checkAuth();
   loadDashboard();
@@ -28,11 +29,48 @@ function initializeLenis() {
   const lenis = new Lenis({
     autoRaf: true,
   });
-  
+
   // Optional: Listen for scroll events
   // lenis.on('scroll', (e) => {
   //   console.log(e);
   // });
+}
+
+function ensureSavedNavAndPage() {
+  const navMenu = document.getElementById('navMenu');
+  if (navMenu && !navMenu.querySelector('[data-page="saved"]')) {
+    const link = document.createElement('a');
+    link.href = '#';
+    link.className = 'nav-link';
+    link.setAttribute('data-page', 'saved');
+    link.textContent = 'Saved';
+    navMenu.appendChild(link);
+  }
+
+  const container = document.querySelector('main .container');
+  if (container && !document.getElementById('savedPage')) {
+    const page = document.createElement('div');
+    page.id = 'savedPage';
+    page.className = 'page';
+    page.innerHTML = `
+      <div class="page-header">
+        <h1 class="page-title">🔖 Saved Items</h1>
+        <p class="page-description">Your saved certificates, internships, and hackathons</p>
+      </div>
+      <div class="filters-section">
+        <div class="filter-group">
+          <button class="filter-btn active" data-saved-filter="all">All</button>
+          <button class="filter-btn" data-saved-filter="certificate">Certificates</button>
+          <button class="filter-btn" data-saved-filter="internship">Internships</button>
+          <button class="filter-btn" data-saved-filter="hackathon">Hackathons</button>
+        </div>
+      </div>
+      <div id="savedGrid" class="cards-grid">
+        <div class="loading">Loading saved items...</div>
+      </div>
+    `;
+    container.appendChild(page);
+  }
 }
 
 // Theme management
@@ -205,11 +243,49 @@ function setupEventListeners() {
 
     try {
       const data = await api.register({ name, username, email, password });
-      state.user = data.user;
-      localStorage.setItem('user', JSON.stringify(data.user));
-      updateAuthUI();
-      closeModal('signupModal');
-      showToast('Registration successful!', 'success');
+
+      // Transition to OTP section
+      document.getElementById('signupFields').style.display = 'none';
+      document.getElementById('otpSection').style.display = 'block';
+      showToast('OTP sent to your email!', 'success');
+
+      // Handle OTP verification
+      const verifyBtn = document.getElementById('verifyOtpBtn');
+      verifyBtn.onclick = async () => {
+        const otp = document.getElementById('otpInput').value;
+        if (!otp || otp.length !== 6) {
+          showToast('Please enter a valid 6-digit OTP', 'warning');
+          return;
+        }
+
+        try {
+          const verifyData = await api.verifyOTP(email, otp);
+          state.user = verifyData.user;
+          localStorage.setItem('user', JSON.stringify(verifyData.user));
+          updateAuthUI();
+          closeModal('signupModal');
+
+          // Reset form for next time
+          document.getElementById('signupFields').style.display = 'block';
+          document.getElementById('otpSection').style.display = 'none';
+          document.getElementById('signupForm').reset();
+
+          showToast('Account verified and created!', 'success');
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      };
+
+      // Handle Resend (back to fields or just re-call register)
+      document.getElementById('resendOtpBtn').onclick = async () => {
+        try {
+          await api.register({ name, username, email, password });
+          showToast('OTP resent successfully!', 'success');
+        } catch (error) {
+          showToast(error.message, 'error');
+        }
+      };
+
     } catch (error) {
       showToast(error.message, 'error');
     }
@@ -275,6 +351,15 @@ function setupEventListeners() {
       loadProjects(difficulty);
     });
   });
+
+  document.querySelectorAll('.filter-btn[data-saved-filter]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.filter-btn[data-saved-filter]').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      const type = e.target.getAttribute('data-saved-filter');
+      loadSavedItems(type === 'all' ? '' : type);
+    });
+  });
 }
 
 // Page navigation
@@ -319,6 +404,9 @@ function navigateToPage(pageName) {
     case 'projects':
       loadProjects();
       break;
+    case 'saved':
+      loadSavedItems();
+      break;
   }
 
   // Close mobile menu
@@ -342,6 +430,7 @@ async function loadCertificates(filters = {}) {
     const response = await api.getCertificates(filters);
     state.certificates = response.data;
     renderCertificates(response.data);
+    attachSaveHandlers(document.getElementById('certificatesGrid'));
   } catch (error) {
     grid.innerHTML = '<div class="loading">Failed to load certificates. Please try again.</div>';
   }
@@ -381,6 +470,7 @@ function renderCertificates(certificates) {
         <a href="${cert.url}" target="_blank" class="card-link">
           Enroll Now →
         </a>
+        <button class="card-link save-btn" data-type="certificate" data-id="${cert.id || ''}">Save</button>
         ${cert.deadline ? `<span style= "color: var(--text-muted); font-size: var(--fs-xs);">Deadline: ${new Date(cert.deadline).toLocaleDateString()}</span>` : ''}
       </div>
     </div>
@@ -410,6 +500,7 @@ async function loadInternships(filters = {}) {
     const response = await api.getInternships(filters);
     state.internships = response.data;
     renderInternships(response.data);
+    attachSaveHandlers(document.getElementById('internshipsGrid'));
   } catch (error) {
     grid.innerHTML = '<div class="loading">Failed to load internships. Please try again.</div>';
   }
@@ -449,6 +540,7 @@ function renderInternships(internships) {
         <a href="${intern.applicationUrl}" target="_blank" class="card-link">
           Apply Now →
         </a>
+        <button class="card-link save-btn" data-type="internship" data-id="${intern.id || ''}">Save</button>
         <span style="color: var(--text-muted); font-size: var(--fs-xs);">Deadline: ${new Date(intern.deadline).toLocaleDateString()}</span>
       </div>
     </div>
@@ -478,6 +570,7 @@ async function loadHackathons() {
     const response = await api.getHackathons();
     state.hackathons = response.data;
     renderHackathons(response.data);
+    attachSaveHandlers(document.getElementById('hackathonsGrid'));
   } catch (error) {
     grid.innerHTML = '<div class="loading">Failed to load hackathons. Please try again.</div>';
   }
@@ -517,10 +610,146 @@ function renderHackathons(hackathons) {
         <a href="${hack.registerUrl}" target="_blank" class="card-link">
           Register Now →
         </a>
+        <button class="card-link save-btn" data-type="hackathon" data-id="${hack.id || ''}">Save</button>
         <span style="color: var(--text-muted); font-size: var(--fs-xs);">${hack.location}</span>
       </div>
     </div>
   `).join('');
+}
+
+async function loadSavedItems(itemType = '') {
+  const grid = document.getElementById('savedGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div class="loading">Loading saved items...</div>';
+
+  if (!state.user) {
+    grid.innerHTML = '<div class="loading">Please login to view saved items.</div>';
+    return;
+  }
+
+  try {
+    const resp = await api.getSavedItems(itemType);
+    const items = resp.data || [];
+    const detailPromises = items.map(async (it) => {
+      try {
+        if (it.itemType === 'certificate') {
+          const d = await api.getCertificateById(it.itemId);
+          return { type: 'certificate', data: d.data };
+        }
+        if (it.itemType === 'internship') {
+          const d = await api.getInternshipById(it.itemId);
+          return { type: 'internship', data: d.data };
+        }
+        if (it.itemType === 'hackathon') {
+          const d = await api.getHackathonById(it.itemId);
+          return { type: 'hackathon', data: d.data };
+        }
+      } catch (_) {
+        return null;
+      }
+      return null;
+    });
+    const details = (await Promise.all(detailPromises)).filter(Boolean);
+    renderSavedItems(details);
+  } catch (error) {
+    grid.innerHTML = '<div class="loading">Failed to load saved items.</div>';
+  }
+}
+
+function renderSavedItems(items) {
+  const grid = document.getElementById('savedGrid');
+  if (!grid) return;
+  if (!items || items.length === 0) {
+    grid.innerHTML = '<div class="loading">No saved items found.</div>';
+    return;
+  }
+  grid.innerHTML = items.map((it) => {
+    if (it.type === 'certificate') {
+      const c = it.data;
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">${c.name}</h3>
+              <p class="card-subtitle">${c.issuer}</p>
+            </div>
+            <span class="badge">${c.level || ''}</span>
+          </div>
+          <p class="card-description">${c.description || ''}</p>
+          <div class="card-meta">
+            <span class="badge">⏱️ ${c.duration || ''}h</span>
+          </div>
+          <div class="card-footer">
+            <a href="${c.url}" target="_blank" class="card-link">Open →</a>
+          </div>
+        </div>`;
+    }
+    if (it.type === 'internship') {
+      const i = it.data;
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">${i.title}</h3>
+              <p class="card-subtitle">${i.company}</p>
+            </div>
+            <span class="badge ${i.remote ? 'badge-success' : ''}">${i.remote ? '🌐 Remote' : '🏢 On-site'}</span>
+          </div>
+          <p class="card-description">${i.description || ''}</p>
+          <div class="card-footer">
+            <a href="${i.applicationUrl}" target="_blank" class="card-link">Open →</a>
+          </div>
+        </div>`;
+    }
+    if (it.type === 'hackathon') {
+      const h = it.data;
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">${h.name}</h3>
+              <p class="card-subtitle">${h.platform}</p>
+            </div>
+            <span class="badge ${h.remote ? 'badge-success' : ''}">${h.remote ? '🌐 Online' : '🏢 Offline'}</span>
+          </div>
+          <p class="card-description">${h.description || ''}</p>
+          <div class="card-footer">
+            <a href="${h.registerUrl}" target="_blank" class="card-link">Open →</a>
+          </div>
+        </div>`;
+    }
+    return '';
+  }).join('');
+}
+
+function attachSaveHandlers(root) {
+  if (!root) return;
+  root.querySelectorAll('.save-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const id = btn.getAttribute('data-id');
+      const type = btn.getAttribute('data-type');
+      handleSave(type, id);
+    });
+  });
+}
+
+async function handleSave(type, id) {
+  if (!state.user) {
+    showToast('Please login to save items', 'warning');
+    return;
+  }
+  try {
+    if (type === 'certificate') {
+      await api.saveCertificate(id);
+    } else if (type === 'internship') {
+      await api.saveInternship(id);
+    } else if (type === 'hackathon') {
+      await api.saveHackathon(id);
+    }
+    showToast('Saved successfully', 'success');
+  } catch (error) {
+    showToast(error.message || 'Failed to save', 'error');
+  }
 }
 
 // News

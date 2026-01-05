@@ -34,7 +34,7 @@ services:
       - /app/node_modules
     networks:
       - careerboost-network
-    command: npm run dev
+    command: npm start
 
   # Frontend (optional - use for production)
   frontend:

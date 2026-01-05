@@ -1,106 +1,6 @@
-const { savedItems } = require('../utils/mockData');
-// const { PrismaClient } = require('@prisma/client');
-// const prisma = new PrismaClient();
-
-// Mock data for certificates (can be replaced with real API/scraping)
-const mockCertificates = [
-    {
-        name: "Google AI Essentials",
-        issuer: "Google",
-        url: "https://www.coursera.org/learn/google-ai-essentials",
-        duration: 10,
-        cost: 0,
-        level: "beginner",
-        skills: ["AI Fundamentals", "Machine Learning Basics", "Generative AI"],
-        salaryImpact: "10-15% increase for entry-level AI roles",
-        description: "Learn AI fundamentals from Google experts. Perfect for beginners looking to understand AI and its applications.",
-        deadline: new Date('2025-12-31')
-    },
-    {
-        name: "AWS Certified Cloud Practitioner",
-        issuer: "Amazon Web Services",
-        url: "https://aws.amazon.com/certification/certified-cloud-practitioner/",
-        duration: 40,
-        cost: 100,
-        level: "beginner",
-        skills: ["Cloud Computing", "AWS Services", "Cloud Architecture"],
-        salaryImpact: "15-20% increase for cloud roles",
-        description: "Industry-recognized AWS certification for cloud computing fundamentals.",
-        deadline: null
-    },
-    {
-        name: "IBM Data Science Professional Certificate",
-        issuer: "IBM",
-        url: "https://www.coursera.org/professional-certificates/ibm-data-science",
-        duration: 120,
-        cost: 0,
-        level: "intermediate",
-        skills: ["Python", "Data Analysis", "Machine Learning", "SQL", "Data Visualization"],
-        salaryImpact: "20-30% increase for data science roles",
-        description: "Complete data science program covering Python, SQL, ML, and real-world projects.",
-        deadline: null
-    },
-    {
-        name: "Microsoft Azure AI Fundamentals",
-        issuer: "Microsoft",
-        url: "https://learn.microsoft.com/en-us/certifications/azure-ai-fundamentals/",
-        duration: 25,
-        cost: 99,
-        level: "beginner",
-        skills: ["Azure", "AI Services", "Machine Learning", "Computer Vision"],
-        salaryImpact: "12-18% increase",
-        description: "Learn AI concepts and Azure AI services for building intelligent applications.",
-        deadline: null
-    },
-    {
-        name: "Deep Learning Specialization",
-        issuer: "DeepLearning.AI",
-        url: "https://www.coursera.org/specializations/deep-learning",
-        duration: 80,
-        cost: 49,
-        level: "advanced",
-        skills: ["Neural Networks", "Deep Learning", "TensorFlow", "CNN", "RNN"],
-        salaryImpact: "30-40% increase for ML engineers",
-        description: "Andrew Ng's comprehensive deep learning course covering neural networks and modern architectures.",
-        deadline: null
-    },
-    {
-        name: "NPTEL - Introduction to Machine Learning",
-        issuer: "IIT Madras via NPTEL",
-        url: "https://nptel.ac.in/courses/106106139",
-        duration: 60,
-        cost: 0,
-        level: "intermediate",
-        skills: ["Machine Learning", "Python", "Algorithms", "Mathematics"],
-        salaryImpact: "15-25% increase",
-        description: "Free Indian course from IIT Madras covering ML fundamentals with Indian context.",
-        deadline: new Date('2025-06-30')
-    },
-    {
-        name: "Google Cybersecurity Professional Certificate",
-        issuer: "Google",
-        url: "https://www.coursera.org/google-certificates/cybersecurity-certificate",
-        duration: 100,
-        cost: 0,
-        level: "beginner",
-        skills: ["Cybersecurity", "Network Security", "Linux", "Python", "Security Tools"],
-        salaryImpact: "25-35% increase for security roles",
-        description: "Job-ready cybersecurity program designed by Google with hands-on projects.",
-        deadline: null
-    },
-    {
-        name: "TensorFlow Developer Certificate",
-        issuer: "TensorFlow",
-        url: "https://www.tensorflow.org/certificate",
-        duration: 60,
-        cost: 100,
-        level: "advanced",
-        skills: ["TensorFlow", "Deep Learning", "Neural Networks", "Computer Vision", "NLP"],
-        salaryImpact: "30-45% increase",
-        description: "Official TensorFlow certification demonstrating ML engineering proficiency.",
-        deadline: null
-    }
-];
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const { certificates: mockCertificates } = require('../utils/mockData');
 
 // Get all certificates
 exports.getAllCertificates = async (req, res) => {
@@ -124,13 +24,12 @@ exports.getAllCertificates = async (req, res) => {
         // Use mock data
         let certificates = mockCertificates;
 
-        // Apply filters to mock data
         if (level) {
-            certificates = certificates.filter(c => c.level === level);
+            certificates = certificates.filter(c => (c.level || '').toLowerCase() === level.toLowerCase());
         }
         if (issuer) {
             certificates = certificates.filter(c =>
-                c.issuer.toLowerCase().includes(issuer.toLowerCase())
+                (c.issuer || '').toLowerCase().includes(issuer.toLowerCase())
             );
         }
         if (maxCost) {
@@ -159,9 +58,9 @@ exports.searchCertificates = async (req, res) => {
 
         // TEMPORARY: Skip database, use mock data
         let certificates = mockCertificates.filter(cert =>
-            cert.name.toLowerCase().includes(q.toLowerCase()) ||
-            cert.issuer.toLowerCase().includes(q.toLowerCase()) ||
-            cert.skills.some(skill => skill.toLowerCase().includes(q.toLowerCase()))
+            (cert.name || '').toLowerCase().includes(q.toLowerCase()) ||
+            (cert.issuer || '').toLowerCase().includes(q.toLowerCase()) ||
+            (cert.skills || []).some(skill => (skill || '').toLowerCase().includes(q.toLowerCase()))
         );
 
         res.json({
@@ -180,9 +79,7 @@ exports.searchCertificates = async (req, res) => {
 exports.getCertificateById = async (req, res) => {
     try {
         const { id } = req.params;
-
-        // TEMPORARY: Skip database, return first mock cert
-        const mockCert = mockCertificates[0];
+        const mockCert = mockCertificates.find(c => c.id === id) || mockCertificates[0];
         return res.json({
             success: true,
             data: mockCert
@@ -199,22 +96,21 @@ exports.saveCertificate = async (req, res) => {
         const { id } = req.params;
         const userId = req.userId;
 
-        // Check if already saved
-        const existing = savedItems.find(item => item.userId === userId && item.itemId === id && item.itemType === 'certificate');
+        const existing = await prisma.savedItem.findFirst({
+            where: { userId, itemId: id, itemType: 'certificate' }
+        });
 
         if (existing) {
             return res.status(400).json({ error: 'Certificate already saved' });
         }
 
-        // Save item
-        const savedItem = {
-            id: `saved${savedItems.length + 1}`,
-            userId,
-            itemId: id,
-            itemType: 'certificate',
-            createdAt: new Date()
-        };
-        savedItems.push(savedItem);
+        const savedItem = await prisma.savedItem.create({
+            data: {
+                userId,
+                itemId: id,
+                itemType: 'certificate'
+            }
+        });
 
         res.json({
             success: true,
@@ -233,11 +129,9 @@ exports.unsaveCertificate = async (req, res) => {
         const { id } = req.params;
         const userId = req.userId;
 
-        const index = savedItems.findIndex(item => item.userId === userId && item.itemId === id && item.itemType === 'certificate');
-
-        if (index !== -1) {
-            savedItems.splice(index, 1);
-        }
+        await prisma.savedItem.deleteMany({
+            where: { userId, itemId: id, itemType: 'certificate' }
+        });
 
         res.json({
             success: true,

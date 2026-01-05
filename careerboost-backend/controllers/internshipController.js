@@ -1,6 +1,7 @@
-// Internship controller
-const { internships, savedItems, applications } = require('../utils/mockData');
-const mockInternships = internships; // Use centralized data
+const { internships } = require('../utils/mockData');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const mockInternships = internships;
 
 exports.getAllInternships = async (req, res) => {
     try {
@@ -77,20 +78,17 @@ exports.saveInternship = async (req, res) => {
         const { id } = req.params;
         const userId = req.userId;
 
-        const existing = savedItems.find(item => item.userId === userId && item.itemId === id && item.itemType === 'internship');
+        const existing = await prisma.savedItem.findFirst({
+            where: { userId, itemId: id, itemType: 'internship' }
+        });
 
         if (existing) {
             return res.status(400).json({ error: 'Internship already saved' });
         }
 
-        const savedItem = {
-            id: `saved${savedItems.length + 1}`,
-            userId,
-            itemId: id,
-            itemType: 'internship',
-            createdAt: new Date()
-        };
-        savedItems.push(savedItem);
+        const savedItem = await prisma.savedItem.create({
+            data: { userId, itemId: id, itemType: 'internship' }
+        });
 
         res.json({
             success: true,
@@ -107,14 +105,13 @@ exports.applyForInternship = async (req, res) => {
         const { id } = req.params;
         const userId = req.userId;
 
-        const application = {
-            id: `app${applications.length + 1}`,
-            userId,
-            internshipId: id,
-            status: 'applied',
-            createdAt: new Date()
-        };
-        applications.push(application);
+        const application = await prisma.application.create({
+            data: {
+                userId,
+                internshipId: id,
+                status: 'applied'
+            }
+        });
 
         res.json({
             success: true,
