@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "project": "CareerBoost",
+    "date": "2026-01-21",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "CareerBoost is an AI-powered career development assistant designed specifically for B.Tech AI & Data Science students. It provides a comprehensive platform to discover industry certifications, internships, hackathons, latest tech news, AI tools, and project ideas to accelerate career growth.",
+  "core_goals": [
+    "Enable students to efficiently discover and apply for relevant career opportunities like certificates, internships, and hackathons.",
+    "Provide up-to-date and curated tech news and AI tools to keep students informed and equipped.",
+    "Offer inspirational project ideas and generate customized projects to build strong portfolios.",
+    "Facilitate user engagement through a personalized dashboard, authentication, and saved item management.",
+    "Ensure a smooth, responsive, and modern user experience leveraging a robust tech stack."
+  ],
+  "key_features": [
+    "User Authentication with login and signup modals supporting JWT-based sessions.",
+    "Dashboard showcasing an overview of career metrics and quick access to key features.",
+    "Certificate Explorer to browse, search, and save career-relevant certifications.",
+    "Internship Board with filtering and application capabilities.",
+    "Hackathon Hub to discover and save upcoming hackathons with prize details.",
+    "Tech News feed offering the latest updates in AI, Cybersecurity, and Data Science.",
+    "AI Tools Directory to explore recommended ML and AI tools for various skill levels.",
+    "Project Generator for curated and on-demand project ideas to build portfolios.",
+    "Saved Items management allowing users to bookmark certificates, internships, and hackathons.",
+    "Support for dark/light themes, responsive design, and smooth animations for enhanced UX."
+  ],
+  "user_flow_summary": [
+    "User lands on the homepage and views the dashboard with career metrics and quick links.",
+    "User registers or logs in through modal dialogs; session credentials are managed via JWT tokens.",
+    "User navigates to Certificate Explorer, searches for relevant certifications, and saves favorites.",
+    "User browses the Internship Board, filters listings by location and stipend, and applies to suitable opportunities.",
+    "User checks the Hackathon Hub for upcoming events and bookmarks those of interest.",
+    "User reads the latest Tech News by category or search and stays updated with industry trends.",
+    "User explores the AI Tools directory to find recommended tools tailored to their skill level.",
+    "User generates or views project ideas to enhance their portfolio.",
+    "User accesses and manages saved items like certificates, internships, and hackathons from their dashboard.",
+    "User updates their profile and skills as needed, ensuring personal data is synchronized."
+  ],
+  "validation_criteria": [
+    "User authentication workflows must securely allow registration, login, token verification, and session management without backend database failures.",
+    "All data fetching features (certificates, internships, hackathons, news, tools, projects) should retrieve and display up-to-date, relevant content without errors.",
+    "Search and filter functionalities in Certificates and Internships must return accurate and timely results.",
+    "Bookmarking/saving functionality must reliably store and retrieve user saved items during the session.",
+    "The UI must be responsive, with smooth animations, and support dark/light mode toggling as designed.",
+    "API endpoints should return appropriate HTTP status codes and handle errors gracefully.",
+    "The application must function fully in a self-contained mode without dependency on a live database, using mock data as fallback.",
+    "Deployment scripts and Docker configurations must allow easy setup of frontend, backend, and database components for both local and cloud environments."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "HTML5",
+      "CSS3",
+      "JavaScript",
+      "Google Fonts",
+      "Lenis Scroll"
+    ],
+    "features": [
+      {
+        "name": "Dashboard",
+        "description": "Overview of career metrics and quick links.",
+        "files": [
+          "index.html",
+          "src/app.js"
+        ]
+      },
+      {
+        "name": "Authentication UI",
+        "description": "Login and signup modals.",
+        "files": [
+          "index.html",
+          "src/app.js"
+        ]
+      },
+      {
+        "name": "Certificate Explorer",
+        "description": "Browse and search certificates.",
+        "files": [
+          "index.html",
+          "src/app.js",
+          "src/api/client.js"
+        ]
+      },
+      {
+        "name": "Internship Board",
+        "description": "Browse and apply for internships.",
+        "files": [
+          "index.html",
+          "src/app.js",
+          "src/api/client.js"
+        ]
+      },
+      {
+        "name": "Hackathon Hub",
+        "description": "Discover upcoming hackathons.",
+        "files": [
+          "index.html",
+          "src/app.js",
+          "src/api/client.js"
+        ]
+      },
+      {
+        "name": "Tech News",
+        "description": "Latest tech news feed.",
+        "files": [
+          "index.html",
+          "src/app.js",
+          "src/api/client.js"
+        ]
+      },
+      {
+        "name": "AI Tools Directory",
+        "description": "Explore AI and ML tools.",
+        "files": [
+          "index.html",
+          "src/app.js",
+          "src/api/client.js"
+        ]
+      },
+      {
+        "name": "Project Generator",
+        "description": "Generate and view project ideas.",
+        "files": [
+          "index.html",
+          "src/app.js",
+          "src/api/client.js"
+        ]
+      },
+      {
+        "name": "Saved Items",
+        "description": "Manage saved certificates, internships, and hackathons.",
+        "files": [
+          "index.html",
+          "src/app.js",
+          "src/api/client.js"
+        ]
+      }
+    ]
+  }
+}

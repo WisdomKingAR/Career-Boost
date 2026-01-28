@@ -36,6 +36,11 @@ class APIClient {
                 throw new Error(data.error || 'Request failed');
             }
 
+            // Compatibility wrapper: if backend returns array, wrap it in { data: [...] }
+            if (Array.isArray(data)) {
+                return { success: true, count: data.length, data };
+            }
+
             return data;
         } catch (error) {
             console.error('API Error:', error);
@@ -45,10 +50,14 @@ class APIClient {
 
     // Authentication
     async register(userData) {
-        return this.request('/auth/register', {
+        const data = await this.request('/auth/register', {
             method: 'POST',
             body: JSON.stringify(userData),
         });
+        if (data.token) {
+            this.setToken(data.token);
+        }
+        return data;
     }
 
     async verifyOTP(email, otp) {

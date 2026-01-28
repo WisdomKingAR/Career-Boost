@@ -1,12 +1,11 @@
-const { PrismaClient } = require('@prisma/client');
 const axios = require('axios');
-const prisma = new PrismaClient();
 
 const mockNews = [
     {
         id: "news1",
-        headline: "OpenAI Releases GPT-5 with Revolutionary Reasoning Capabilities",
-        description: "OpenAI's latest model GPT-5 demonstrates unprecedented reasoning abilities, solving complex mathematical proofs and scientific problems. The model shows 40% improvement in logical reasoning tasks.",
+        title: "OpenAI Releases GPT-5 with Revolutionary Reasoning Capabilities",
+        content: "OpenAI's latest model GPT-5 demonstrates unprecedented reasoning abilities...",
+        description: "OpenAI's latest model GPT-5 demonstrates unprecedented reasoning abilities...",
         category: "AI",
         source: "TechCrunch",
         sourceUrl: "https://www.google.com/search?q=OpenAI+Releases+GPT-5+TechCrunch",
@@ -89,10 +88,10 @@ exports.getLatestNews = async (req, res) => {
                 publishedAt: new Date(a.publishedAt || Date.now()),
                 createdAt: new Date()
             }));
-            return res.json({ success: true, count: mapped.length, data: mapped });
+            return res.json(mapped);
         }
         const news = mockNews.slice(0, parseInt(limit));
-        res.json({ success: true, count: news.length, data: news });
+        res.json(news);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch news' });
     }
@@ -116,13 +115,13 @@ exports.getNewsByCategory = async (req, res) => {
                 publishedAt: new Date(a.publishedAt || Date.now()),
                 createdAt: new Date()
             }));
-            return res.json({ success: true, category, count: mapped.length, data: mapped });
+            return res.json(mapped);
         }
         if (!validCategories.includes(category)) {
             return res.status(400).json({ error: 'Invalid category' });
         }
         const news = mockNews.filter(n => n.category === category);
-        res.json({ success: true, category, count: news.length, data: news });
+        res.json(news);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch news by category' });
     }
@@ -148,13 +147,14 @@ exports.searchNews = async (req, res) => {
                 publishedAt: new Date(a.publishedAt || Date.now()),
                 createdAt: new Date()
             }));
-            return res.json({ success: true, query: q, count: mapped.length, data: mapped });
+            return res.json(mapped);
         }
         const news = mockNews.filter(n =>
-            n.headline.toLowerCase().includes(q.toLowerCase()) ||
-            n.description.toLowerCase().includes(q.toLowerCase())
+            (n.title || '').toLowerCase().includes(q.toLowerCase()) ||
+            (n.content || '').toLowerCase().includes(q.toLowerCase()) ||
+            (n.description || '').toLowerCase().includes(q.toLowerCase())
         );
-        res.json({ success: true, query: q, count: news.length, data: news });
+        res.json(news);
     } catch (error) {
         res.status(500).json({ error: 'Search failed' });
     }

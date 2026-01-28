@@ -18,11 +18,7 @@ exports.getAllTools = async (req, res) => {
             results = results.filter(t => t.freeTier === (freeTier === 'true'));
         }
 
-        res.json({
-            success: true,
-            count: results.length,
-            data: results
-        });
+        res.json(results);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch tools' });
     }
@@ -34,13 +30,7 @@ exports.getRecommendations = async (req, res) => {
 
         const tools = mockTools.filter(t => t.difficulty === level);
 
-        res.json({
-            success: true,
-            level,
-            message: `Recommended tools for ${level} level`,
-            count: tools.length,
-            data: tools
-        });
+        res.json(tools);
     } catch (error) {
         res.status(500).json({ error: 'Failed to get recommendations' });
     }
@@ -54,12 +44,7 @@ exports.getToolsByCategory = async (req, res) => {
             t.category.toLowerCase() === category.toLowerCase()
         );
 
-        res.json({
-            success: true,
-            category,
-            count: tools.length,
-            data: tools
-        });
+        res.json(tools);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch tools by category' });
     }

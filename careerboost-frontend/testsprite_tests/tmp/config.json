@@ -1,0 +1,24 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "loginUser": "test@example.com",
+  "loginPassword": "abc123456",
+  "executionArgs": {
+    "projectName": "careerboost-frontend",
+    "projectPath": "d:\\AARYAN\\CODES\\careerboost\\careerboost-frontend",
+    "testIds": [
+      "TC001",
+      "TC002",
+      "TC003",
+      "TC004",
+      "TC005"
+    ],
+    "additionalInstruction": "Execute core frontend test cases (TC001 to TC005) focusing on authentication and dashboard functionality using the defined test plan.",
+    "envs": {
+      "API_KEY": "sk-user-fJ9rQCoqoVj5DBNQgTby-T87F9L23m-QIjuh2QmBwgD1jxtsprepc-TvkAUgaPSGvgRcfH7j9ZyMXHPhTTvU_o1B8J7aLftyBPzFB4CYjJc4XG-tyk9o9l7g7CHo3cBF-Ls"
+    }
+  },
+  "proxy": "http://6b089588-3225-42a2-9a04-4ba4fc3fa9a2:jjJCHeWqRrCeSHXytykniCgesLnyUyYV@tun.testsprite.com:8080"
+}

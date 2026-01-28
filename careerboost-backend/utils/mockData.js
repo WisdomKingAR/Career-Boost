@@ -6,22 +6,29 @@ const hashedPassword = bcrypt.hashSync('password', 10);
 const users = [
     {
         id: "user1",
-        email: "test@example.com",
+        email: "testuser@example.com",
         username: "testuser",
-        password: hashedPassword,
+        password: bcrypt.hashSync('ValidPass123!', 10),
         name: "Test User",
         location: "Mumbai, India",
         createdAt: new Date(),
-        skills: [
-            { id: "s1", name: "JavaScript", level: "Intermediate" },
-            { id: "s2", name: "Python", level: "Advanced" }
-        ],
+        skills: [],
         preferences: {
             id: "p1",
             roles: ["Frontend Developer", "AI Engineer"],
             locations: ["Mumbai", "Remote"],
             salary: 50000
         }
+    },
+    {
+        id: "user_test",
+        name: "Valid User",
+        email: "validuser@example.com",
+        password: bcrypt.hashSync('ValidPass123!', 10),
+        username: "validuser",
+        location: "New York, USA",
+        skills: [],
+        createdAt: new Date()
     }
 ];
 

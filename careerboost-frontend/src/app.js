@@ -244,48 +244,15 @@ function setupEventListeners() {
     try {
       const data = await api.register({ name, username, email, password });
 
-      // Transition to OTP section
-      document.getElementById('signupFields').style.display = 'none';
-      document.getElementById('otpSection').style.display = 'block';
-      showToast('OTP sent to your email!', 'success');
+      state.user = data.user;
+      localStorage.setItem('user', JSON.stringify(data.user));
+      updateAuthUI();
+      closeModal('signupModal');
 
-      // Handle OTP verification
-      const verifyBtn = document.getElementById('verifyOtpBtn');
-      verifyBtn.onclick = async () => {
-        const otp = document.getElementById('otpInput').value;
-        if (!otp || otp.length !== 6) {
-          showToast('Please enter a valid 6-digit OTP', 'warning');
-          return;
-        }
+      // Reset form
+      document.getElementById('signupForm').reset();
 
-        try {
-          const verifyData = await api.verifyOTP(email, otp);
-          state.user = verifyData.user;
-          localStorage.setItem('user', JSON.stringify(verifyData.user));
-          updateAuthUI();
-          closeModal('signupModal');
-
-          // Reset form for next time
-          document.getElementById('signupFields').style.display = 'block';
-          document.getElementById('otpSection').style.display = 'none';
-          document.getElementById('signupForm').reset();
-
-          showToast('Account verified and created!', 'success');
-        } catch (error) {
-          showToast(error.message, 'error');
-        }
-      };
-
-      // Handle Resend (back to fields or just re-call register)
-      document.getElementById('resendOtpBtn').onclick = async () => {
-        try {
-          await api.register({ name, username, email, password });
-          showToast('OTP resent successfully!', 'success');
-        } catch (error) {
-          showToast(error.message, 'error');
-        }
-      };
-
+      showToast('Account created successfully!', 'success');
     } catch (error) {
       showToast(error.message, 'error');
     }

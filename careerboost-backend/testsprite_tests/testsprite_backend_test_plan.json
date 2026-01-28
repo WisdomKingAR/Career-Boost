@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "user registration functionality",
+    "description": "Test the user registration endpoint to ensure new users can register successfully with valid data and appropriate error handling for invalid inputs."
+  },
+  {
+    "id": "TC002",
+    "title": "user login functionality",
+    "description": "Verify the user login endpoint authenticates users correctly with valid credentials and returns appropriate errors for invalid credentials."
+  },
+  {
+    "id": "TC003",
+    "title": "token verification process",
+    "description": "Test the token verification endpoint to confirm that valid tokens are accepted and invalid or expired tokens are rejected."
+  },
+  {
+    "id": "TC004",
+    "title": "otp verification mechanism",
+    "description": "Validate the OTP verification endpoint to ensure correct OTPs are accepted and incorrect or expired OTPs are handled properly."
+  },
+  {
+    "id": "TC005",
+    "title": "certificate listing and retrieval",
+    "description": "Test the certificates listing and retrieval endpoints to ensure all certificates can be listed, searched, and fetched by ID correctly."
+  },
+  {
+    "id": "TC006",
+    "title": "certificate unsave functionality",
+    "description": "Verify the unsave certificate endpoint removes a saved certificate from the user's profile correctly."
+  },
+  {
+    "id": "TC007",
+    "title": "internship listing and application",
+    "description": "Test the internship endpoints for listing, searching, saving, and applying to internships, ensuring applications are recorded properly."
+  },
+  {
+    "id": "TC008",
+    "title": "hackathon listing and save feature",
+    "description": "Verify the hackathon endpoints for listing upcoming events and saving hackathons to user profiles function correctly."
+  },
+  {
+    "id": "TC009",
+    "title": "news feed retrieval and search",
+    "description": "Test the news endpoints to ensure latest news, category-based news, and search functionality work as expected."
+  },
+  {
+    "id": "TC010",
+    "title": "user profile and skill management",
+    "description": "Validate user profile retrieval, update, skill addition, removal, and retrieval of saved items and applications for accuracy and persistence."
+  }
+]

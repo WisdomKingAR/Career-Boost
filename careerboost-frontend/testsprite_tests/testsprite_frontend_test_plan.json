@@ -1,0 +1,526 @@
+[
+  {
+    "id": "TC001",
+    "title": "User Registration Success",
+    "description": "Verify that a new user can successfully register with valid information and receive a JWT token.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the signup modal."
+      },
+      {
+        "type": "action",
+        "description": "Enter valid user details (username, email, password)."
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify registration success message is shown."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify JWT token is received and stored in session."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User Registration with Existing Email",
+    "description": "Ensure registration fails if the email is already registered.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open signup modal."
+      },
+      {
+        "type": "action",
+        "description": "Enter an email already in use."
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message indicating email already registered."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "User Login Success",
+    "description": "Validate that a registered user can login with correct credentials and receive a valid JWT token.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open login modal."
+      },
+      {
+        "type": "action",
+        "description": "Enter valid username/email and password."
+      },
+      {
+        "type": "action",
+        "description": "Submit login form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user is authenticated and JWT token is stored in session."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard with career metrics is displayed."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "User Login Failure with Invalid Credentials",
+    "description": "Ensure login fails with incorrect username/email or password and proper error is shown.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open login modal."
+      },
+      {
+        "type": "action",
+        "description": "Enter invalid username/email or password."
+      },
+      {
+        "type": "action",
+        "description": "Submit login form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message indicating login failure."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Dashboard Data Accuracy",
+    "description": "Verify that the dashboard correctly displays up-to-date career metrics and relevant quick links after login.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a valid user."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to dashboard page or view default homepage."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify career metrics reflect current user data."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify quick links to key features are visible and functional."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Certificate Explorer Search Validity",
+    "description": "Validate that searching certificates by keywords returns accurate and relevant results.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Certificate Explorer."
+      },
+      {
+        "type": "action",
+        "description": "Enter keyword in search bar and execute search."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the displayed certificates match the search query."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no irrelevant certificates are shown."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Save and Retrieve Certificates",
+    "description": "Ensure user can save certificates and that saved certificates persist during the session.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Browse certificates and select some to save/bookmark."
+      },
+      {
+        "type": "action",
+        "description": "Access saved items section."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify previously saved certificates appear in saved items."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify saved items remain after page refresh during the session."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Internship Board Filtering",
+    "description": "Verify filtering internships by location and stipend returns accurate results.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Internship Board."
+      },
+      {
+        "type": "action",
+        "description": "Apply filter by location."
+      },
+      {
+        "type": "action",
+        "description": "Apply filter by stipend range."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify internships shown meet filter criteria."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Internship Application process",
+    "description": "Verify users can apply to internships successfully and receive confirmation.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Browse internship listings."
+      },
+      {
+        "type": "action",
+        "description": "Select an internship and click apply."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify application form or confirmation prompt is displayed."
+      },
+      {
+        "type": "action",
+        "description": "Submit application."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify application success message or notification."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Hackathon Hub Event Discovery and Bookmarking",
+    "description": "Validate browsing upcoming hackathons, checking prize details, and saving events functionality.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Hackathon Hub."
+      },
+      {
+        "type": "action",
+        "description": "Browse list of upcoming hackathons."
+      },
+      {
+        "type": "action",
+        "description": "View prize details of selected hackathon."
+      },
+      {
+        "type": "action",
+        "description": "Bookmark/save hackathon for later reference."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify bookmarked hackathon appears in saved items."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Tech News Feed Category Filtering and Search",
+    "description": "Verify tech news feed can be filtered by category (AI, Cybersecurity, Data Science) and searched accurately.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Tech News section."
+      },
+      {
+        "type": "action",
+        "description": "Select category filter (e.g., Cybersecurity)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify news articles shown belong to selected category."
+      },
+      {
+        "type": "action",
+        "description": "Use search bar to find news containing specific keywords."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify news articles match search query."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "AI Tools Directory Browsing for Skill Levels",
+    "description": "Ensure AI tools are displayed correctly based on skill level filters.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to AI Tools Directory."
+      },
+      {
+        "type": "action",
+        "description": "Select a skill level filter (e.g., beginner, intermediate, advanced)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify displayed tools match the selected skill level."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Project Generator Functionality",
+    "description": "Verify users are able to generate and view curated and on-demand project ideas successfully.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Project Generator section."
+      },
+      {
+        "type": "action",
+        "description": "Request curated project ideas."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify relevant curated project ideas are displayed."
+      },
+      {
+        "type": "action",
+        "description": "Request on-demand generated projects for specific criteria."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify custom generated project ideas meet criteria."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Saved Items Management",
+    "description": "Confirm users can view and remove saved certificates, internships, and hackathons reliably.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Saved Items section."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all previously saved items are listed."
+      },
+      {
+        "type": "action",
+        "description": "Remove one saved certificate, internship, and hackathon each."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the removed items no longer appear in saved items."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Dark and Light Theme Toggle",
+    "description": "Verify the UI correctly switches between dark and light modes and persists user preference.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Locate theme toggle control and switch to dark mode."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI elements update to dark theme styles."
+      },
+      {
+        "type": "action",
+        "description": "Switch back to light mode."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI elements update to light theme styles."
+      },
+      {
+        "type": "action",
+        "description": "Refresh the page and verify previously selected theme persists."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Responsive Design Check",
+    "description": "Verify the application layout and functionality adjusts correctly across different device screen sizes.",
+    "category": "ui",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the application on desktop, tablet, and mobile screen sizes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify content is visible, aligned, and functional on all screen sizes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify navigation menus and key features are accessible."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify smooth scrolling and animations work correctly on all devices."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "API Endpoint Error Handling",
+    "description": "Ensure that API endpoints return appropriate HTTP status codes and error responses on failure.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate backend API failure or invalid request for certificates, internships, and projects."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify API returns appropriate error HTTP status codes (4xx or 5xx)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user sees graceful error messages without app crashing."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Self-contained Mode Fallback with Mock Data",
+    "description": "Verify the application functions fully using mock data when live backend/database is unavailable.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Disable live backend API or simulate backend unavailability."
+      },
+      {
+        "type": "action",
+        "description": "Interact with all major features (certificates, internships, projects, news, tools)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify data loads correctly using mock data without errors."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user can perform search, filter, save item functions normally."
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Profile and Skills Update Synchronization",
+    "description": "Validate that user profile updates, including skills, are saved and synchronized correctly.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login and navigate to profile settings."
+      },
+      {
+        "type": "action",
+        "description": "Edit personal information and skills."
+      },
+      {
+        "type": "action",
+        "description": "Save changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify updated data is persisted and reflected immediately in profile."
+      },
+      {
+        "type": "assertion",
+        "description": "Reload page and confirm updates remain."
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Deployment Scripts and Docker Configurations",
+    "description": "Verify the deployment scripts and Docker configurations deploy frontend, backend, and database for both local and cloud environments successfully.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Run deployment scripts locally in a clean environment."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all components (frontend, backend, database) start successfully."
+      },
+      {
+        "type": "action",
+        "description": "Deploy using Docker configuration on cloud environment."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify full application is accessible and functional."
+      }
+    ]
+  }
+]

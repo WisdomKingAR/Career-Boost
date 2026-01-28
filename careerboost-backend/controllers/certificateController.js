@@ -1,25 +1,9 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 const { certificates: mockCertificates } = require('../utils/mockData');
 
 // Get all certificates
 exports.getAllCertificates = async (req, res) => {
     try {
         const { level, issuer, maxCost, limit = 20, offset = 0 } = req.query;
-
-        // Build filter
-        const where = {};
-        if (level) where.level = level;
-        if (issuer) where.issuer = { contains: issuer, mode: 'insensitive' };
-        if (maxCost) where.cost = { lte: parseFloat(maxCost) };
-
-        // TEMPORARY: Skip database, use mock data directly (no PostgreSQL setup)
-        // let certificates = await prisma.certificate.findMany({
-        //     where,
-        //     take: parseInt(limit),
-        //     skip: parseInt(offset),
-        //     orderBy: { createdAt: 'desc' }
-        // });
 
         // Use mock data
         let certificates = mockCertificates;
@@ -36,11 +20,7 @@ exports.getAllCertificates = async (req, res) => {
             certificates = certificates.filter(c => c.cost <= parseFloat(maxCost));
         }
 
-        res.json({
-            success: true,
-            count: certificates.length,
-            data: certificates
-        });
+        res.json(certificates);
     } catch (error) {
         console.error('Get certificates error:', error);
         res.status(500).json({ error: 'Failed to fetch certificates' });
@@ -56,19 +36,13 @@ exports.searchCertificates = async (req, res) => {
             return res.status(400).json({ error: 'Search query is required' });
         }
 
-        // TEMPORARY: Skip database, use mock data
         let certificates = mockCertificates.filter(cert =>
             (cert.name || '').toLowerCase().includes(q.toLowerCase()) ||
             (cert.issuer || '').toLowerCase().includes(q.toLowerCase()) ||
             (cert.skills || []).some(skill => (skill || '').toLowerCase().includes(q.toLowerCase()))
         );
 
-        res.json({
-            success: true,
-            count: certificates.length,
-            query: q,
-            data: certificates
-        });
+        res.json(certificates);
     } catch (error) {
         console.error('Search certificates error:', error);
         res.status(500).json({ error: 'Search failed' });
@@ -79,43 +53,39 @@ exports.searchCertificates = async (req, res) => {
 exports.getCertificateById = async (req, res) => {
     try {
         const { id } = req.params;
-        const mockCert = mockCertificates.find(c => c.id === id) || mockCertificates[0];
-        return res.json({
-            success: true,
-            data: mockCert
-        });
+        const cert = mockCertificates.find(c => c.id === id) || mockCertificates[0];
+        return res.json(cert);
     } catch (error) {
         console.error('Get certificate error:', error);
         res.status(500).json({ error: 'Failed to fetch certificate' });
     }
 };
 
-// Save certificate
+// Save certificate (Mock Persistence)
 exports.saveCertificate = async (req, res) => {
     try {
         const { id } = req.params;
         const userId = req.userId;
 
-        const existing = await prisma.savedItem.findFirst({
-            where: { userId, itemId: id, itemType: 'certificate' }
-        });
+        const { savedItems } = require('../utils/mockData');
 
-        if (existing) {
-            return res.status(400).json({ error: 'Certificate already saved' });
-        }
+        // Avoid duplicates
+        const alreadySaved = savedItems.find(it => it.userId === userId && it.itemId === id && it.itemType === 'certificate');
 
-        const savedItem = await prisma.savedItem.create({
-            data: {
+        if (!alreadySaved) {
+            savedItems.push({
+                id: `save_${Date.now()}`,
                 userId,
                 itemId: id,
-                itemType: 'certificate'
-            }
-        });
+                itemType: 'certificate',
+                createdAt: new Date()
+            });
+        }
 
         res.json({
             success: true,
             message: 'Certificate saved successfully',
-            data: savedItem
+            data: { userId, itemId: id, itemType: 'certificate' }
         });
     } catch (error) {
         console.error('Save certificate error:', error);
@@ -123,15 +93,18 @@ exports.saveCertificate = async (req, res) => {
     }
 };
 
-// Unsave certificate
+// Unsave certificate (Mock Persistence)
 exports.unsaveCertificate = async (req, res) => {
     try {
         const { id } = req.params;
         const userId = req.userId;
 
-        await prisma.savedItem.deleteMany({
-            where: { userId, itemId: id, itemType: 'certificate' }
-        });
+        const mockData = require('../utils/mockData');
+        const index = mockData.savedItems.findIndex(it => it.userId === userId && it.itemId === id && it.itemType === 'certificate');
+
+        if (index !== -1) {
+            mockData.savedItems.splice(index, 1);
+        }
 
         res.json({
             success: true,

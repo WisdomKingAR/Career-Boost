@@ -1,0 +1,360 @@
+{
+  "meta": {
+    "project": "CareerBoost",
+    "date": "2026-01-21",
+    "prepared_by": "Standard Product Requirements Document Generator"
+  },
+  "product_overview": "CareerBoost is an AI-powered career development assistant designed specifically for B.Tech AI & Data Science students. It provides a consolidated platform for discovering certifications, internships, hackathons, project ideas, AI tools, and the latest tech news to accelerate student careers in AI and Data Science.",
+  "core_goals": [
+    "Provide a comprehensive and easy-to-use platform for students to find relevant career-building resources such as certifications, internships, and hackathons.",
+    "Enable user authentication and personalized experiences including saving items and applying for internships.",
+    "Keep students informed with up-to-date technology news and AI tool recommendations tailored to their skill level.",
+    "Support career growth by offering curated project ideas and tools for practical learning and portfolio development.",
+    "Ensure secure, performant, and scalable backend supporting all API interactions and data management."
+  ],
+  "key_features": [
+    "User authentication system including registration, login, token verification, and OTP verification.",
+    "Certificate discovery and management with search and save functionality.",
+    "Internship listings with search, filter, application submission, and saved items feature.",
+    "Hackathon calendar with listings of upcoming events and ability to save hackathons.",
+    "Tech news feed categorized by topics with search capability.",
+    "AI tool recommendations categorized by user skill level and type.",
+    "Project ideas including generation of custom project suggestions and management.",
+    "User profile and skills management with ability to track saved items and applications.",
+    "Modern UI features including dark/light mode, glassmorphism design, smooth animations, and full responsiveness."
+  ],
+  "user_flow_summary": [
+    "Users register and authenticate using email and password with optional OTP verification for enhanced security.",
+    "After login, users can browse and search for certificates, internships, hackathons, news articles, AI tools, and projects from the main dashboard or navigation menus.",
+    "Users can save items of interest (certificates, internships, hackathons) to their personal profile for quick access later.",
+    "Internship applications can be submitted through the platform after users select an internship and apply.",
+    "Users can view and update their profile information and manage skills.",
+    "Users receive AI tool recommendations based on their skill levels and interests.",
+    "Project ideas can be viewed or generated dynamically to assist users in portfolio building.",
+    "Users stay informed by browsing categorized news feeds or searching for relevant news articles."
+  ],
+  "validation_criteria": [
+    "All authentication endpoints support secure registration, login, token validation, and OTP verification with proper error handling.",
+    "Certificate, internship, hackathon, news, tools, and project APIs respond correctly to requests including searches, retrievals, saving, and application posting.",
+    "Frontend UI must provide seamless dark/light mode toggling with consistent glassmorphism and responsive design.",
+    "User profile updates and skill management are reflected accurately in the backend database.",
+    "Saved items for users are persistently stored and retrievable across sessions.",
+    "Internship application submissions are recorded and associated with the correct user profiles.",
+    "API response times meet performance benchmarks ensuring fast data loading.",
+    "Deployment process documented and tested to ensure smooth launch on platforms like Railway (backend) and Vercel (frontend)."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "Node.js",
+      "Express.js",
+      "Prisma",
+      "PostgreSQL",
+      "JWT",
+      "bcrypt",
+      "helmet",
+      "morgan",
+      "cors"
+    ],
+    "features": [
+      {
+        "name": "Authentication",
+        "description": "User registration, login, token verification, and OTP verification.",
+        "files": [
+          "routes/auth.js",
+          "controllers/authController.js"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Auth API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/api/auth/register": {
+              "post": {
+                "summary": "Register new user"
+              }
+            },
+            "/api/auth/login": {
+              "post": {
+                "summary": "User login"
+              }
+            },
+            "/api/auth/verify": {
+              "get": {
+                "summary": "Verify token"
+              }
+            },
+            "/api/auth/verify-otp": {
+              "post": {
+                "summary": "Verify OTP"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Certificates",
+        "description": "Discovery and management of certificates.",
+        "files": [
+          "routes/certificates.js",
+          "controllers/certificateController.js"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Certificates API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/api/certificates": {
+              "get": {
+                "summary": "List all certificates"
+              }
+            },
+            "/api/certificates/search": {
+              "get": {
+                "summary": "Search certificates"
+              }
+            },
+            "/api/certificates/{id}": {
+              "get": {
+                "summary": "Get certificate by ID"
+              }
+            },
+            "/api/certificates/{id}/save": {
+              "delete": {
+                "summary": "Unsave certificate"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Internships",
+        "description": "Internship opportunities and applications.",
+        "files": [
+          "routes/internships.js",
+          "controllers/internshipController.js"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Internships API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/api/internships": {
+              "get": {
+                "summary": "List internships"
+              }
+            },
+            "/api/internships/search": {
+              "get": {
+                "summary": "Search internships"
+              }
+            },
+            "/api/internships/{id}": {
+              "get": {
+                "summary": "Get internship by ID"
+              }
+            },
+            "/api/internships/{id}/save": {
+              "post": {
+                "summary": "Save internship"
+              }
+            },
+            "/api/internships/{id}/apply": {
+              "post": {
+                "summary": "Apply for internship"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Hackathons",
+        "description": "Hackathon calendar and registration.",
+        "files": [
+          "routes/hackathons.js",
+          "controllers/hackathonController.js"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Hackathons API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/api/hackathons": {
+              "get": {
+                "summary": "List hackathons"
+              }
+            },
+            "/api/hackathons/upcoming": {
+              "get": {
+                "summary": "Upcoming hackathons"
+              }
+            },
+            "/api/hackathons/{id}": {
+              "get": {
+                "summary": "Get hackathon by ID"
+              }
+            },
+            "/api/hackathons/{id}/save": {
+              "post": {
+                "summary": "Save hackathon"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "News",
+        "description": "Tech news feed.",
+        "files": [
+          "routes/news.js",
+          "controllers/newsController.js"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "News API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/api/news": {
+              "get": {
+                "summary": "Latest news"
+              }
+            },
+            "/api/news/category/{category}": {
+              "get": {
+                "summary": "News by category"
+              }
+            },
+            "/api/news/search": {
+              "get": {
+                "summary": "Search news"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Tools",
+        "description": "AI tool recommendations.",
+        "files": [
+          "routes/tools.js",
+          "controllers/toolController.js"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Tools API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/api/tools": {
+              "get": {
+                "summary": "All tools"
+              }
+            },
+            "/api/tools/recommendations": {
+              "get": {
+                "summary": "Get recommendations"
+              }
+            },
+            "/api/tools/category/{category}": {
+              "get": {
+                "summary": "Tools by category"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Projects",
+        "description": "Project ideas and management.",
+        "files": [
+          "routes/projects.js",
+          "controllers/projectController.js"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Projects API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/api/projects": {
+              "get": {
+                "summary": "All projects"
+              }
+            },
+            "/api/projects/generate": {
+              "post": {
+                "summary": "Generate project ideas"
+              }
+            },
+            "/api/projects/{id}": {
+              "get": {
+                "summary": "Get project by ID"
+              }
+            },
+            "/api/projects/{id}/start": {
+              "post": {
+                "summary": "Start project"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "Users",
+        "description": "User profile and saved items management.",
+        "files": [
+          "routes/users.js",
+          "controllers/userController.js"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Users API",
+            "version": "1.0.0"
+          },
+          "paths": {
+            "/api/users/profile": {
+              "get": {
+                "summary": "Get user profile"
+              },
+              "put": {
+                "summary": "Update profile"
+              }
+            },
+            "/api/users/skills": {
+              "post": {
+                "summary": "Add skill"
+              }
+            },
+            "/api/users/skills/{skillId}": {
+              "delete": {
+                "summary": "Remove skill"
+              }
+            },
+            "/api/users/saved": {
+              "get": {
+                "summary": "Get saved items"
+              }
+            },
+            "/api/users/applications": {
+              "get": {
+                "summary": "Get applications"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

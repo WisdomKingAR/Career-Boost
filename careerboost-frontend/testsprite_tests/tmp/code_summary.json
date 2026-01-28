@@ -1,0 +1,90 @@
+{
+    "tech_stack": [
+        "HTML5",
+        "CSS3",
+        "JavaScript",
+        "Google Fonts",
+        "Lenis Scroll"
+    ],
+    "features": [
+        {
+            "name": "Dashboard",
+            "description": "Overview of career metrics and quick links.",
+            "files": [
+                "index.html",
+                "src/app.js"
+            ]
+        },
+        {
+            "name": "Authentication UI",
+            "description": "Login and signup modals.",
+            "files": [
+                "index.html",
+                "src/app.js"
+            ]
+        },
+        {
+            "name": "Certificate Explorer",
+            "description": "Browse and search certificates.",
+            "files": [
+                "index.html",
+                "src/app.js",
+                "src/api/client.js"
+            ]
+        },
+        {
+            "name": "Internship Board",
+            "description": "Browse and apply for internships.",
+            "files": [
+                "index.html",
+                "src/app.js",
+                "src/api/client.js"
+            ]
+        },
+        {
+            "name": "Hackathon Hub",
+            "description": "Discover upcoming hackathons.",
+            "files": [
+                "index.html",
+                "src/app.js",
+                "src/api/client.js"
+            ]
+        },
+        {
+            "name": "Tech News",
+            "description": "Latest tech news feed.",
+            "files": [
+                "index.html",
+                "src/app.js",
+                "src/api/client.js"
+            ]
+        },
+        {
+            "name": "AI Tools Directory",
+            "description": "Explore AI and ML tools.",
+            "files": [
+                "index.html",
+                "src/app.js",
+                "src/api/client.js"
+            ]
+        },
+        {
+            "name": "Project Generator",
+            "description": "Generate and view project ideas.",
+            "files": [
+                "index.html",
+                "src/app.js",
+                "src/api/client.js"
+            ]
+        },
+        {
+            "name": "Saved Items",
+            "description": "Manage saved certificates, internships, and hackathons.",
+            "files": [
+                "index.html",
+                "src/app.js",
+                "src/api/client.js"
+            ]
+        }
+    ]
+}

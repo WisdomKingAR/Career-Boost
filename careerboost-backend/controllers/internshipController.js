@@ -1,6 +1,4 @@
 const { internships } = require('../utils/mockData');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 const mockInternships = internships;
 
 exports.getAllInternships = async (req, res) => {
@@ -23,11 +21,7 @@ exports.getAllInternships = async (req, res) => {
             );
         }
 
-        res.json({
-            success: true,
-            count: results.length,
-            data: results
-        });
+        res.json(results);
     } catch (error) {
         console.error('Get internships error:', error);
         res.status(500).json({ error: 'Failed to fetch internships' });
@@ -48,12 +42,7 @@ exports.searchInternships = async (req, res) => {
             int.skills.some(skill => skill.toLowerCase().includes(q.toLowerCase()))
         );
 
-        res.json({
-            success: true,
-            count: results.length,
-            query: q,
-            data: results
-        });
+        res.json(results);
     } catch (error) {
         res.status(500).json({ error: 'Search failed' });
     }
@@ -64,10 +53,7 @@ exports.getInternshipById = async (req, res) => {
         const { id } = req.params;
         const internship = mockInternships.find(i => i.id === id) || mockInternships[0];
 
-        res.json({
-            success: true,
-            data: internship
-        });
+        res.json(internship);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch internship' });
     }
@@ -78,22 +64,25 @@ exports.saveInternship = async (req, res) => {
         const { id } = req.params;
         const userId = req.userId;
 
-        const existing = await prisma.savedItem.findFirst({
-            where: { userId, itemId: id, itemType: 'internship' }
-        });
+        const { savedItems } = require('../utils/mockData');
 
-        if (existing) {
-            return res.status(400).json({ error: 'Internship already saved' });
+        // Avoid duplicates
+        const alreadySaved = savedItems.find(it => it.userId === userId && it.itemId === id && it.itemType === 'internship');
+
+        if (!alreadySaved) {
+            savedItems.push({
+                id: `save_i_${Date.now()}`,
+                userId,
+                itemId: id,
+                itemType: 'internship',
+                createdAt: new Date()
+            });
         }
-
-        const savedItem = await prisma.savedItem.create({
-            data: { userId, itemId: id, itemType: 'internship' }
-        });
 
         res.json({
             success: true,
             message: 'Internship saved',
-            data: savedItem
+            data: { userId, itemId: id, itemType: 'internship' }
         });
     } catch (error) {
         res.status(500).json({ error: 'Failed to save internship' });
@@ -105,18 +94,23 @@ exports.applyForInternship = async (req, res) => {
         const { id } = req.params;
         const userId = req.userId;
 
-        const application = await prisma.application.create({
-            data: {
-                userId,
-                internshipId: id,
-                status: 'applied'
-            }
-        });
+        const { applications } = require('../utils/mockData');
+
+        const newApp = {
+            id: `app_${Date.now()}`,
+            userId,
+            internshipId: id,
+            status: 'applied',
+            appliedAt: new Date()
+        };
+
+        applications.push(newApp);
 
         res.json({
             success: true,
             message: 'Application submitted',
-            data: application
+            applicationId: newApp.id,
+            data: newApp
         });
     } catch (error) {
         res.status(500).json({ error: 'Failed to apply' });

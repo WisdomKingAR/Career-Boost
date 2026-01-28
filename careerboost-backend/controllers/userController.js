@@ -1,17 +1,10 @@
-// User controller using Prisma
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+// User controller using Mock Data
+const { users } = require('../utils/mockData');
 
 exports.getProfile = async (req, res) => {
     try {
         const userId = req.userId;
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-            include: {
-                skills: true,
-                preferences: true
-            }
-        });
+        const user = users.find(u => u.id === userId);
 
         if (!user) {
             return res.status(404).json({ success: false, error: 'User not found' });
@@ -21,7 +14,8 @@ exports.getProfile = async (req, res) => {
 
         res.json({
             success: true,
-            data: userWithoutPassword
+            ...userWithoutPassword,
+            userId: user.id
         });
     } catch (error) {
         console.error('Get profile error:', error);
@@ -34,23 +28,21 @@ exports.updateProfile = async (req, res) => {
         const userId = req.userId;
         const { name, bio, location, avatar } = req.body;
 
-        const updatedUser = await prisma.user.update({
-            where: { id: userId },
-            data: {
-                ...(name && { name }),
-                ...(bio && { bio }),
-                ...(location && { location }),
-                ...(avatar && { avatar })
-            }
-        });
+        const userIndex = users.findIndex(u => u.id === userId);
 
-        const { password, ...userWithoutPassword } = updatedUser;
+        if (userIndex === -1) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
 
-        res.json({
-            success: true,
-            message: 'Profile updated successfully',
-            data: userWithoutPassword
-        });
+        // Update fields
+        if (name !== undefined) users[userIndex].name = name;
+        if (bio !== undefined) users[userIndex].bio = bio;
+        if (location !== undefined) users[userIndex].location = location;
+        if (avatar !== undefined) users[userIndex].avatar = avatar;
+
+        const { password, ...userWithoutPassword } = users[userIndex];
+
+        res.json(userWithoutPassword);
     } catch (error) {
         console.error('Update profile error:', error);
         res.status(500).json({ success: false, error: 'Failed to update profile' });
@@ -62,31 +54,28 @@ exports.addSkill = async (req, res) => {
         const userId = req.userId;
         const { skillName, proficiency = 'beginner' } = req.body;
 
-        const existingSkill = await prisma.userSkill.findUnique({
-            where: {
-                userId_skillName: {
-                    userId,
-                    skillName
-                }
-            }
-        });
+        const user = users.find(u => u.id === userId);
+        if (!user) return res.status(404).json({ success: false, error: 'User not found' });
 
+        if (!user.skills) user.skills = [];
+
+        const existingSkill = user.skills.find(s => s.name === skillName);
         if (existingSkill) {
-            return res.status(400).json({ success: false, error: 'Skill already exists' });
+            return res.status(201).json({ success: true, data: existingSkill });
         }
 
-        const skill = await prisma.userSkill.create({
-            data: {
-                userId,
-                skillName,
-                proficiency
-            }
-        });
+        const newSkill = {
+            id: `s${Date.now()}`,
+            name: skillName,
+            level: proficiency
+        };
+        user.skills.push(newSkill);
 
-        res.json({
+        res.status(201).json({
             success: true,
             message: 'Skill added successfully',
-            data: skill
+            id: newSkill.id,
+            ...newSkill
         });
     } catch (error) {
         console.error('Add skill error:', error);
@@ -99,12 +88,12 @@ exports.removeSkill = async (req, res) => {
         const { skillId } = req.params;
         const userId = req.userId;
 
-        await prisma.userSkill.deleteMany({
-            where: {
-                id: skillId,
-                userId: userId
-            }
-        });
+        const user = users.find(u => u.id === userId);
+        if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
+        if (user.skills) {
+            user.skills = user.skills.filter(s => s.id !== skillId);
+        }
 
         res.json({
             success: true,
@@ -121,18 +110,19 @@ exports.getSavedItems = async (req, res) => {
         const userId = req.userId;
         const { itemType } = req.query;
 
-        const results = await prisma.savedItem.findMany({
-            where: {
-                userId,
-                ...(itemType && { itemType })
-            }
-        });
+        const { savedItems } = require('../utils/mockData');
 
-        res.json({
-            success: true,
-            count: results.length,
-            data: results
-        });
+        let results = savedItems.filter(it => it.userId === userId);
+
+        if (itemType) {
+            results = results.filter(it => it.itemType === itemType);
+        }
+
+        const flattened = results.map(it => ({
+            ...it,
+            id: it.itemId
+        }));
+        res.json(flattened);
     } catch (error) {
         console.error('Get saved items error:', error);
         res.status(500).json({ success: false, error: 'Failed to fetch saved items' });
@@ -142,18 +132,21 @@ exports.getSavedItems = async (req, res) => {
 exports.getApplications = async (req, res) => {
     try {
         const userId = req.userId;
-        const userApps = await prisma.application.findMany({
-            where: { userId },
-            include: {
-                internship: true
-            }
-        });
+        const { applications, internships } = require('../utils/mockData');
 
-        res.json({
-            success: true,
-            count: userApps.length,
-            data: userApps
-        });
+        const userApps = applications.filter(app => app.userId === userId);
+
+        // Map internship details to applications
+        const results = userApps.map(app => ({
+            ...app,
+            internship: internships.find(i => i.id === app.internshipId)
+        }));
+
+        const flattened = results.map(app => ({
+            ...app,
+            id: app.internshipId
+        }));
+        res.json(flattened);
     } catch (error) {
         console.error('Get applications error:', error);
         res.status(500).json({ success: false, error: 'Failed to fetch applications' });
