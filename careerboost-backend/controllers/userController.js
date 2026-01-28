@@ -26,7 +26,7 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const userId = req.userId;
-        const { name, bio, location, avatar } = req.body;
+        const { name, username, email, bio, location, avatar } = req.body;
 
         const userIndex = users.findIndex(u => u.id === userId);
 
@@ -36,6 +36,8 @@ exports.updateProfile = async (req, res) => {
 
         // Update fields
         if (name !== undefined) users[userIndex].name = name;
+        if (username !== undefined) users[userIndex].username = username;
+        if (email !== undefined) users[userIndex].email = email;
         if (bio !== undefined) users[userIndex].bio = bio;
         if (location !== undefined) users[userIndex].location = location;
         if (avatar !== undefined) users[userIndex].avatar = avatar;
@@ -67,7 +69,7 @@ exports.addSkill = async (req, res) => {
         const newSkill = {
             id: `s${Date.now()}`,
             name: skillName,
-            level: proficiency
+            level: proficiency || req.body.level || 'beginner'
         };
         user.skills.push(newSkill);
 
@@ -120,7 +122,8 @@ exports.getSavedItems = async (req, res) => {
 
         const flattened = results.map(it => ({
             ...it,
-            id: it.itemId
+            id: it.itemId,
+            category: it.itemType
         }));
         res.json(flattened);
     } catch (error) {

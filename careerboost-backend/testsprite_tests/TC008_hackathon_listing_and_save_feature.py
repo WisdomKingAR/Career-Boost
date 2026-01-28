@@ -8,61 +8,35 @@ HEADERS = {
 }
 TIMEOUT = 30
 
+
 def test_hackathon_listing_and_save_feature():
-    saved_hackathon_id = None
+    # List upcoming hackathons
+    upcoming_url = f"{BASE_URL}/api/hackathons/upcoming"
+    list_resp = requests.get(upcoming_url, headers=HEADERS, timeout=TIMEOUT)
+    assert list_resp.status_code == 200, f"Expected 200 but got {list_resp.status_code}"
+    hackathons = list_resp.json()
+    assert isinstance(hackathons, list), "Response is not a list"
+    assert len(hackathons) > 0, "No upcoming hackathons found"
+
+    # Pick the first hackathon to save
+    hackathon_id = hackathons[0].get("id")
+    assert hackathon_id is not None, "Hackathon ID missing"
+
+    save_url = f"{BASE_URL}/api/hackathons/{hackathon_id}/save"
     try:
-        # Step 1: List upcoming hackathons
-        upcoming_url = f"{BASE_URL}/api/hackathons/upcoming"
-        response = requests.get(upcoming_url, headers=HEADERS, timeout=TIMEOUT)
-        assert response.status_code == 200, f"Expected 200 OK for upcoming hackathons, got {response.status_code}"
-        hackathons = response.json()
-        assert isinstance(hackathons, list), "Expected list of hackathons in response"
-        assert len(hackathons) >= 0, "Hackathons list should be present (empty or not)"
-        
-        # If no upcoming hackathons, then we cannot test save functionality, but we still pass the listing test.
-        if len(hackathons) == 0:
-            return
+        save_resp = requests.post(save_url, headers=HEADERS, timeout=TIMEOUT)
+        assert save_resp.status_code == 200, f"Save hackathon failed with status {save_resp.status_code}"
 
-        # Step 2: Pick a hackathon to save
-        hackathon = hackathons[0]
-        assert "id" in hackathon, "Hackathon item missing 'id' field"
-        hackathon_id = hackathon["id"]
-
-        # Step 3: Save the hackathon to user profile
-        save_url = f"{BASE_URL}/api/hackathons/{hackathon_id}/save"
-        save_response = requests.post(save_url, headers=HEADERS, timeout=TIMEOUT)
-        assert save_response.status_code in (200, 201), (
-            f"Expected 200 or 201 when saving hackathon, got {save_response.status_code}"
-        )
-        save_result = save_response.json()
-        # Save result validation can vary; assuming success returns some success message or saved hackathon id
-        assert ("success" in save_result and save_result["success"]) or ("id" in save_result and save_result["id"] == hackathon_id), \
-            "Saving hackathon did not return expected success confirmation"
-
-        saved_hackathon_id = hackathon_id
-
-        # Step 4: Verify saved hackathon appears in user's saved items
-        saved_items_url = f"{BASE_URL}/api/users/saved"
-        saved_items_response = requests.get(saved_items_url, headers=HEADERS, timeout=TIMEOUT)
-        assert saved_items_response.status_code == 200, f"Expected 200 OK for user saved items, got {saved_items_response.status_code}"
-        saved_items = saved_items_response.json()
-        # saved_items may not include a 'type' field, so just check by matching 'id'
-        hackathon_saved = any(
-            item.get("id") == saved_hackathon_id
-            for item in saved_items
-        )
-        assert hackathon_saved, "Saved hackathon not found in user's saved items"
-
+        # Verify the hackathon is saved in user profile
+        saved_url = f"{BASE_URL}/api/users/saved"
+        saved_resp = requests.get(saved_url, headers=HEADERS, timeout=TIMEOUT)
+        assert saved_resp.status_code == 200, f"Get saved items failed with status {saved_resp.status_code}"
+        saved_items = saved_resp.json()
+        assert any(item.get("id") == hackathon_id for item in saved_items), "Saved hackathon not found in user profile"
     finally:
-        # Cleanup: Unsave the hackathon if it was saved
-        if saved_hackathon_id is not None:
-            unsave_url = f"{BASE_URL}/api/hackathons/{saved_hackathon_id}/save"
-            try:
-                unsave_resp = requests.delete(unsave_url, headers=HEADERS, timeout=TIMEOUT)
-                # Accept 200 or 204 as success for delete
-                assert unsave_resp.status_code in (200, 204), f"Expected 200 or 204 on unsave, got {unsave_resp.status_code}"
-            except Exception:
-                # If unsave fails, we just silently pass here to not mask original test errors
-                pass
+        # Unsave the hackathon to clean up
+        unsave_url = f"{BASE_URL}/api/hackathons/{hackathon_id}/save"
+        requests.delete(unsave_url, headers=HEADERS, timeout=TIMEOUT)
+
 
 test_hackathon_listing_and_save_feature()

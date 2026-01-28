@@ -9,21 +9,12 @@
     "projectName": "careerboost-backend",
     "projectPath": "d:\\AARYAN\\CODES\\careerboost\\careerboost-backend",
     "testIds": [
-      "TC001",
-      "TC002",
-      "TC003",
-      "TC010",
-      "TC004",
-      "TC005",
-      "TC006",
-      "TC007",
-      "TC008",
-      "TC009"
+      "TC008"
     ],
-    "additionalInstruction": "Execute all backend test cases (TC001 to TC010) to verify recent fixes for schema mismatch, registration validation, and profile persistence. Ensure the local server at port 5000 is used.",
+    "additionalInstruction": "Run TC008. Ensure it passes now with the category fix.",
     "envs": {
       "API_KEY": "sk-user-fJ9rQCoqoVj5DBNQgTby-T87F9L23m-QIjuh2QmBwgD1jxtsprepc-TvkAUgaPSGvgRcfH7j9ZyMXHPhTTvU_o1B8J7aLftyBPzFB4CYjJc4XG-tyk9o9l7g7CHo3cBF-Ls"
     }
   },
-  "proxy": "http://62b7a74b-835d-4df0-a238-e1fecf970501:tG702D7uXRGMUcsCbxbfV7ZSHbDIIDo7@tun.testsprite.com:8080"
+  "proxy": "http://916cbdf1-b5b7-4a7b-9864-1ad4331d4e5b:yhuHD6SD9wgubhqbLCf9b5SN6Wf5EuqH@tun.testsprite.com:8080"
 }
