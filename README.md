@@ -34,8 +34,7 @@ CareerBoost helps students discover certificates, internships, hackathons, news,
 - **bcrypt** - Password hashing
 
 ### DevOps
-- **Docker** - Containerization
-- **Docker Compose** - Multi-container orchestration
+- **Native Node.js** - Running servers locally
 
 ---
 
@@ -43,7 +42,6 @@ CareerBoost helps students discover certificates, internships, hackathons, news,
 
 ### Prerequisites
 - Node.js 18+ installed
-- PostgreSQL 15+ installed (or use Docker)
 - npm or yarn package manager
 
 ### Option 1: Local Setup
@@ -64,8 +62,8 @@ npm install
 # Create .env file
 copy .env.example .env
 
-# Update DATABASE_URL in .env:
-# DATABASE_URL="postgresql://username:password@localhost:5432/careerboost"
+# Update DATABASE_URL in .env (defaults to SQLite):
+# DATABASE_URL="file:./prisma/dev.db"
 
 # Generate Prisma client
 npx prisma generate
@@ -92,16 +90,7 @@ npm run dev
 
 Frontend will open on `http://localhost:3000`
 
-### Option 2: Docker Setup
 
-```bash
-# From project root
-docker-compose up -d
-
-# Backend: http://localhost:5000
-# Frontend: http://localhost:3000
-# Database: localhost:5432
-```
 
 ---
 
@@ -126,9 +115,7 @@ careerboost/
 │   │   └── ...
 │   ├── middleware/                 # Auth, error handling
 │   ├── services/                   # External API integrations
-│   ├── server.js                   # Main server file
-│   ├── package.json
-│   └── Dockerfile
+│   └── server.js                   # Main server file
 │
 ├── careerboost-frontend/
 │   ├── assets/
@@ -140,9 +127,8 @@ careerboost/
 │   │   │   └── client.js          # API client
 │   │   └── app.js                 # Main application logic
 │   ├── index.html                 # Entry point
-│   └── package.json
 │
-└── docker-compose.yml             # Docker orchestration
+└── start.ps1                      # Rapid startup script
 ```
 
 ---
@@ -222,7 +208,7 @@ Create `.env` in backend directory:
 ```env
 NODE_ENV=development
 PORT=5000
-DATABASE_URL="postgresql://user:password@localhost:5432/careerboost"
+DATABASE_URL="file:./prisma/dev.db"
 JWT_SECRET=your_super_secret_key
 JWT_EXPIRY=7d
 NEWSAPI_KEY=your_newsapi_key

@@ -71,8 +71,8 @@ Write-Host "  2. Frontend server (Port 3000)" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Your browser should automatically open http://localhost:3000" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "📚 If you haven't set up the database yet:" -ForegroundColor Yellow
-Write-Host "   1. Install PostgreSQL" -ForegroundColor Gray
-Write-Host "   2. Update DATABASE_URL in careerboost-backend/.env" -ForegroundColor Gray
-Write-Host "   3. Run: Set-Location careerboost-backend; npx prisma migrate dev" -ForegroundColor Gray
+Write-Host "📚 Database Setup (SQLite):" -ForegroundColor Yellow
+Write-Host "   SQLite is used by default, no installation needed." -ForegroundColor Gray
+Write-Host "   Update DATABASE_URL in careerboost-backend/.env if needed." -ForegroundColor Gray
+Write-Host "   Run: Set-Location careerboost-backend; npx prisma migrate dev" -ForegroundColor Gray
 Write-Host ""
