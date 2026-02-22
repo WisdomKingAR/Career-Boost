@@ -8,7 +8,7 @@ const validate = require('../middleware/validate');
 const registerSchema = {
     email: { type: 'string', required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, maxLength: 254 },
     password: { type: 'string', required: true, minLength: 8, maxLength: 128 },
-    username: { type: 'string', minLength: 3, maxLength: 50 },
+    username: { type: 'string', required: true, minLength: 3, maxLength: 50, pattern: /^[a-zA-Z0-9_]+$/ },
     name: { type: 'string', maxLength: 100 },
     confirmPassword: { type: 'string', required: true },
     location: { type: 'string', maxLength: 100 }

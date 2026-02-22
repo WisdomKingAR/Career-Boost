@@ -106,10 +106,10 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  console.error(`[${new Date().toISOString()}] Error:`, err.stack || err);
   res.status(err.status || 500).json({
     error: {
-      message: err.message || 'Internal Server Error',
+      message: 'Internal Server Error',
       status: err.status || 500
     }
   });

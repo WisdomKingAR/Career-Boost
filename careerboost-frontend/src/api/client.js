@@ -4,7 +4,7 @@ const API_BASE_URL = (() => {
     if (typeof window !== 'undefined' && window.location && window.location.hostname !== 'localhost') {
         return `${window.location.origin.replace(/\/$/, '')}/api`;
     }
-    return 'http://localhost:5000/api';
+    return 'http://localhost:5001/api';
 })();
 
 class APIClient {

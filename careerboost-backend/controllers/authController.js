@@ -6,12 +6,16 @@ const jwt = require('jsonwebtoken');
 // In-memory OTP store for signup flow
 const pendingUsers = new Map();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret_key_123';
+const crypto = require('crypto');
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is not set');
+}
 const JWT_EXPIRY = process.env.JWT_EXPIRY || '7d';
 
 // Generate 6-digit OTP
 const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return crypto.randomInt(100000, 999999).toString();
 };
 
 // Start Registration - Creates user immediately (No OTP)
@@ -43,7 +47,7 @@ exports.register = async (req, res) => {
         }
 
         // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         // Create the actual user immediately
         const newUser = {
@@ -83,12 +87,13 @@ exports.register = async (req, res) => {
     }
 };
 
-// Verify OTP - Mocked for tests
+// Verify OTP
 exports.verifyOTP = async (req, res) => {
     const { otp, email } = req.body;
-    if (otp === '123456') {
-        return res.json({ success: true, message: 'OTP verified successfully' });
-    }
+
+    // In production, verify against stored OTP (e.g., in Redis or DB)
+    // For now, removing the insecure '123456' bypass
+
     if (otp === '999999') {
         return res.status(400).json({ success: false, message: 'OTP has expired' });
     }
